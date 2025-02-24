@@ -1,0 +1,39 @@
+﻿@model UsersApp.ViewModels.OrderDetailsViewModel
+
+<form asp-action="PlaceOrder" asp-controller="Order" method="post" onsubmit="return confirmOrder(event)">
+    <p><strong>Product:</strong> @Model.ProductName</p>
+
+    <input asp-for="ProductId" type="hidden" />
+
+    <div class="form-group">
+        <label asp-for="DeliveryAddress"></label>
+        <input asp-for="DeliveryAddress" class="form-control" required />
+        <span asp-validation-for="DeliveryAddress" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="City"></label>
+        <input asp-for="City" class="form-control" required />
+        <span asp-validation-for="City" class="text-danger"></span>
+    </div>
+
+    <div class="form-group">
+        <label asp-for="ZipCode"></label>
+        <input asp-for="ZipCode" class="form-control" required />
+        <span asp-validation-for="ZipCode" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Submit Order</button>
+</form>
+
+<script>
+    function confirmOrder(event) {
+        event.preventDefault(); 
+
+        if (confirm("Are you sure you want to place this order?")) {
+            event.target.submit(); 
+        } else {
+            alert("You can review your order before submitting.");
+        }
+    }
+</script>

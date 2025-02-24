@@ -1,0 +1,36 @@
+﻿@model IEnumerable<Product>
+@{
+    ViewData["Title"] = "Store";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h2 class="text-center">Store</h2>
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Brand</th>
+            <th>Category</th>
+            <th>Price</th>
+            <th>Description</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var product in Model)
+        {
+            <tr>
+                <td>@product.Name</td>
+                <td>@product.Brand</td>
+                <td>@product.Category</td>
+                <td>@(product.Price)$</td>
+                <td>@product.Description</td>
+                <td style="white-space:nowrap">
+                    <a asp-controller="Order" asp-action="OrderDetails" asp-route-productId="@product.Id" class="btn btn-primary">
+                            Buy Now
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
