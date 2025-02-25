@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNet.Identity.Owin;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using UsersApp.Models;
 using UsersApp.ViewModels;
@@ -150,6 +151,8 @@ namespace UsersApp.Controllers
             }
         }
 
+        [HttpPost]
+        [ValidateAntiForgeryToken]
         public async Task<IActionResult> Logout()
         {
             await signInManager.SignOutAsync();

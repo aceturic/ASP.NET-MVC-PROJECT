@@ -1,17 +1,9 @@
-﻿@model UsersApp.ViewModels.PurchaseOrder
-@{
+﻿@{
     ViewData["Title"] = "Order Confirmation";
-    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
-<h2>Thank you for shopping with us!</h2>
-
-<p><strong>Purchase ID:</strong> @Model.PurchaseId</p>
-@if (Model.Product != null)
-{
-    <p><strong>Product Purchased:</strong> @Model.Product.Name</p>
-}
-else
-{
-    <p><strong>Product Purchased:</strong> Unknown</p>
-}
+<div class="alert alert-success mt-3">
+    <h2>Thank you for shopping with us!</h2>
+    <p>Your order has been placed successfully.</p>
+    <p><strong>Purchase ID:</strong> @ViewBag.PurchaseId</p>
+</div>

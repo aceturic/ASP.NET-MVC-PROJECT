@@ -4,9 +4,9 @@
 <ul class="navbar-nav ms-auto">
     @if (signInManager.IsSignedIn(User))
     {
-        <li class="nav-item">
-            <a class="nav-link text-dark" asp-controller="Account" asp-action="Logout">Logout</a>
-        </li>
+        <form asp-controller="Account" asp-action="Logout" method="post" id="logoutForm" class="d-inline">
+            <button type="submit" class="btn btn-link nav-link">Logout @User.Identity.Name</button>
+        </form>
     }
     else
     {

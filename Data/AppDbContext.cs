@@ -10,8 +10,8 @@ namespace UsersApp.Data
         public AppDbContext(DbContextOptions options) : base(options)
         {
         }
+        public DbSet<Order> Orders { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<PurchaseOrder> PurchaseOrders { get; set; }
-
     }
 }

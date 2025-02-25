@@ -1,0 +1,29 @@
+﻿@model IEnumerable<UsersApp.ViewModels.UserViewModel>
+
+@{
+    ViewData["Title"] = "Registered Users";
+}
+
+<h2>Registered Users</h2>
+
+<table class="table table-striped">
+    <thead>
+        <tr>
+            <th>Email</th>
+            <th>Name</th>
+            <th>Actions</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var user in Model)
+        {
+            <tr>
+                <td>@user.Email</td>
+                <td>@user.Name</td>
+                <td>
+                    <a class="btn btn-sm btn-primary" asp-controller="Admin" asp-action="EditUser" asp-route-id="@user.Id">Edit</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

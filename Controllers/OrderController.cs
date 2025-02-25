@@ -1,126 +1,83 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
 using UsersApp.Data;
+using UsersApp.Models;
 using UsersApp.ViewModels;
 
-public class OrderController : Controller
+namespace UsersApp.Controllers
 {
-    private readonly AppDbContext _context;
-
-    public OrderController(AppDbContext context)
+    public class OrderController : Controller
     {
-        _context = context;
-    }
-
-    [HttpGet]
-    public IActionResult OrderDetails(int productId)
-    {
-        if (!User.Identity.IsAuthenticated)
+        private readonly AppDbContext _context;
+        public OrderController(AppDbContext context)
         {
-            return RedirectToAction("Register", "Account");
+            _context = context;
         }
 
-        var product = _context.Products.Find(productId);
-        if (product == null)
+        // GET: /Order/OrderDetails?productId=1
+        [HttpGet]
+        public IActionResult OrderDetails(int productId)
         {
-            return NotFound();
-        }
+            // Retrieve product details from the database
+            var product = _context.Products.FirstOrDefault(p => p.Id == productId);
+            if (product == null)
+            {
+                return NotFound("Product not found.");
+            }
 
-        var model = new OrderDetailsViewModel
-        {
-            Email = User.Identity.Name,
-            ProductId = product.Id,
-            ProductName = product.Name
-        };
+            // Create and return the view model
+            var model = new OrderViewModel
+            {
+                ProductId = product.Id,
+                ProductName = product.Name,
+                Price = product.Price  // Assuming Price is already a decimal
+            };
 
-        return View(model);
-    }
-
-    [HttpPost]
-    public IActionResult OrderDetails(OrderDetailsViewModel model)
-    {
-        if (!User.Identity.IsAuthenticated)
-        {
-            return RedirectToAction("Register", "Account");
-        }
-
-        if (!ModelState.IsValid)
-        {           
             return View(model);
         }
 
-        var product = _context.Products.Find(model.ProductId);
-        if (product == null)
+        // POST: /Order/OrderDetails
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult OrderDetails(OrderViewModel model)
         {
-            ModelState.AddModelError("", "Product not found.");
-            return View(model);
+            if (!ModelState.IsValid)
+            {
+                // If there are validation errors, redisplay the form
+                return View(model);
+            }
+
+            // Generate a unique PurchaseID (using a GUID substring)
+            string purchaseId = Guid.NewGuid().ToString("N").Substring(0, 10).ToUpper();
+
+            // Map the view model to an Order entity
+            var order = new Order
+            {
+                PurchaseId = purchaseId,
+                ProductId = model.ProductId,
+                ProductName = model.ProductName,
+                Price = model.Price,
+                DeliveryAddress = model.DeliveryAddress,
+                City = model.City,
+                ZipCode = model.ZipCode,
+                OrderDate = DateTime.Now
+            };
+
+            // Save the order into the database
+            _context.Orders.Add(order);
+            _context.SaveChanges();
+
+            // Pass the PurchaseID to the confirmation page
+            TempData["PurchaseId"] = purchaseId;
+            return RedirectToAction("OrderConfirmation");
         }
 
-        string purchaseId = Guid.NewGuid().ToString("N").Substring(0, 10).ToUpper();
-
-        var purchaseOrder = new PurchaseOrder
+        // GET: /Order/OrderConfirmation
+        public IActionResult OrderConfirmation()
         {
-            PurchaseId = purchaseId,
-            Email = model.Email,
-            DeliveryAddress = model.DeliveryAddress,
-            City = model.City,
-            ZipCode = model.ZipCode,
-            OrderDate = DateTime.Now,
-            ProductId = product.Id
-        };
-
-        _context.PurchaseOrders.Add(purchaseOrder);
-        _context.SaveChanges();
-
-        return RedirectToAction("OrderConfirmation", new { id = purchaseOrder.Id });
-    }
-
-    public IActionResult OrderConfirmation(int id)
-    {
-        var order = _context.PurchaseOrders
-            .Include(o => o.Product)
-            .FirstOrDefault(o => o.Id == id);
-
-        if (order == null)
-        {
-            return NotFound();
+            ViewBag.PurchaseId = TempData["PurchaseId"];
+            return View();
         }
-
-        var model = new OrderConfirmationViewModel
-        {
-            PurchaseId = order.PurchaseId,
-            Email = order.Email,
-            ProductName = order.Product?.Name,
-            DeliveryAddress = order.DeliveryAddress,
-            City = order.City,
-            ZipCode = order.ZipCode
-        };
-
-        return View(model);
-    }
-    [HttpPost]
-    public IActionResult PlaceOrder(OrderDetailsViewModel model)
-    {
-        if (!ModelState.IsValid)
-        {
-            return View("OrderDetails", model);
-        }
-
-        var newOrder = new PurchaseOrder
-        {
-            PurchaseId = Guid.NewGuid().ToString().Substring(0, 8).ToUpper(), // Generate random Purchase ID
-            ProductId = model.ProductId,
-            Email = User.Identity.Name, // Assuming user is logged in
-            DeliveryAddress = model.DeliveryAddress,
-            City = model.City,
-            ZipCode = model.ZipCode
-        };
-
-        _context.PurchaseOrders.Add(newOrder);
-        _context.SaveChanges();
-
-        return RedirectToAction("OrderConfirmation", new { id = newOrder.Id });
     }
 }
