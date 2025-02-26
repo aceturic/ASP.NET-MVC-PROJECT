@@ -184,6 +184,14 @@ body.fade-out {
         .dark-mode .table td {
             color: #ffffff;
         }
+main{
+    min-height: 100vh;
+}
+
+footer {
+    height: 100px;
+}
+
 
 
 

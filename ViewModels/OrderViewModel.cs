@@ -16,3 +16,4 @@ namespace UsersApp.ViewModels
         [Required(ErrorMessage = "Zip Code is required.")]
         public string ZipCode { get; set; }
     }
+}

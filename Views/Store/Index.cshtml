@@ -2,9 +2,67 @@
 @{
     ViewData["Title"] = "Store";
     Layout = "~/Views/Shared/_Layout.cshtml";
+    var categories = (ViewBag.Categories as List<string>) ?? new List<string>();
+    string selectedCategory = ViewBag.SelectedCategory as string;
+    string searchString = ViewBag.SearchString as string;
+    string priceSort = ViewBag.PriceSort as string;
 }
 
+
 <h2 class="text-center my-4">Store</h2>
+
+
+
+<form method="get" id="filterForm" class="mb-4">
+    <div class="row">
+        <!-- Search Bar with Button -->
+        <div class="col-md-4">
+            <input type="text" name="searchString" id="searchInput" class="form-control" placeholder="Search products..." value="@searchString" />
+        </div>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">Search</button>
+        </div>
+        <!-- Category Dropdown -->
+        <div class="col-md-3">
+            <select name="category" id="categorySelect" class="form-control">
+                <option value="">All Categories</option>
+                @foreach (var cat in categories)
+                {
+                    if (cat == selectedCategory)
+                    {
+                        <option value="@cat" selected="selected">@cat</option>
+                    }
+                    else
+                    {
+                        <option value="@cat">@cat</option>
+                    }
+                }
+            </select>
+        </div>
+        <!-- Price Sort Dropdown -->
+        <div class="col-md-3">
+            <select name="priceSort" id="priceSortSelect" class="form-control">
+                <option value="">Sort by Price</option>
+                @if (priceSort == "asc")
+                {
+                    <option value="asc" selected="selected">Ascending</option>
+                }
+                else
+                {
+                    <option value="asc">Ascending</option>
+                }
+                @if (priceSort == "desc")
+                {
+                    <option value="desc" selected="selected">Descending</option>
+                }
+                else
+                {
+                    <option value="desc">Descending</option>
+                }
+            </select>
+        </div>
+    </div>
+</form>
 
 <div class="container">
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
@@ -33,3 +91,21 @@
         }
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var form = document.getElementById('filterForm');
+            var categorySelect = document.getElementById('categorySelect');
+            var priceSortSelect = document.getElementById('priceSortSelect');
+
+            // Auto-submit when dropdowns change.
+            categorySelect.addEventListener('change', function () {
+                form.submit();
+            });
+            priceSortSelect.addEventListener('change', function () {
+                form.submit();
+            });
+        });
+    </script>
+}

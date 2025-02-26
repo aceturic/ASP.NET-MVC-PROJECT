@@ -32,6 +32,7 @@ namespace UsersApp.Controllers
             return View();
         }
 
+
         [HttpPost]
         public IActionResult Create(ProductDto productDto)
         {
