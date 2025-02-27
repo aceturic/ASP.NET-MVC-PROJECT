@@ -27,21 +27,25 @@
                                 <i class="fas fa-home"></i> Home
                             </a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link" asp-area="" asp-controller="Products" asp-action="Index">
-                                <i class="fas fa-box"></i> Products
-                            </a>
-                        </li>
+                        @if (User.Identity.IsAuthenticated && User.IsInRole("Admin"))
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-area="" asp-controller="Products" asp-action="Index">
+                                    <i class="fas fa-box"></i> Products
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Admin" asp-action="RegisteredUsers">
+                                    Registered Users
+                                </a>
+                            </li>
+                        }
+
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Store" asp-action="Index">
                                 <i class="fas fa-store"></i> Store
                             </a>
                         </li>
-                        <li class="nav-item">
-                        <a class="nav-link" asp-controller="Admin" asp-action="RegisteredUsers">
-                            Registered Users
-                        </a>
-                       </li>
                     </ul>
                     <div class="d-flex">
                         <button id="darkModeToggle" class="btn btn-outline-secondary me-2">🌙</button>

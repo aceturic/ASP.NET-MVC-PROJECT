@@ -19,5 +19,8 @@ namespace UsersApp.Models
         public string ImageFileName { get; set; } = "";
         public DateTime CreatedAt { get; set; }
 
+        public virtual ICollection<Review> Reviews { get; set; }
+
+
     }
 }
