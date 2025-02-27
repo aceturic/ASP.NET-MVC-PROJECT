@@ -18,18 +18,6 @@
 }
 
 
-.navbar {
-    background-color: #f8f9fa;
-    color: #212529; 
-   
-}
-
-body.dark-mode .navbar {
-    background-color: #343a40; 
-    color: #ffffff;
-    
-}
-
 body {
     background-color: var(--background-color);
     color: var(--text-color);
@@ -58,6 +46,8 @@ body {
 body {
     opacity: 1;
     transition: opacity 0.5s ease-in-out;
+    color: #000000; 
+    background-color: #f8f9fa;
 }
 
 body.fade-out {
@@ -191,6 +181,46 @@ main{
 footer {
     height: 100px;
 }
+
+.navbar {
+    background: linear-gradient(135deg, #007bff, #6610f2);
+}
+.navbar-nav .nav-link {
+    color: #212529 !important;
+    font-weight: 500;
+    transition: color 0.3s ease, transform 0.2s ease;
+}
+
+    .navbar-nav .nav-link:hover {
+        color: #ffd700 !important;
+        transform: scale(1.05);
+    }
+body.dark-mode {
+    background-color: #121212;
+    color: #f8f9fa;
+}
+
+    body.dark-mode .navbar {
+        background: #333;
+    }
+
+    body.dark-mode .navbar-nav .nav-link {
+        color: #bbb !important;
+    }
+
+        body.dark-mode .navbar-nav .nav-link:hover {
+            color: #ffd700 !important;
+        }
+
+
+#darkModeToggle {
+    transition: background 0.3s ease;
+}
+
+    #darkModeToggle:hover {
+        background: rgba(255, 255, 255, 0.2);
+    }
+
 
 
 
