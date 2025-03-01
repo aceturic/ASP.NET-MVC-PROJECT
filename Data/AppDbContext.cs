@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore;
 using UsersApp.Models;
 using UsersApp.ViewModels;
@@ -7,16 +8,41 @@ namespace UsersApp.Data
 {
     public class AppDbContext : IdentityDbContext<Users>
     {
-        public AppDbContext()
+        public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
         }
 
-        public AppDbContext(DbContextOptions options) : base(options)
-        {
-        }
         public DbSet<Order> Orders { get; set; }
         public DbSet<Product> Products { get; set; }
-        public DbSet<PurchaseOrder> PurchaseOrders { get; set; }
-        public object Reviews { get; internal set; }
+        public DbSet<Review> Reviews { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder builder)
+        {
+            base.OnModelCreating(builder);
+
+            // ✅ Ensuring unique constraints and relationships
+
+            builder.Entity<Product>()
+                .HasMany(p => p.Reviews)
+                .WithOne()
+                .HasForeignKey(r => r.ProductId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            builder.Entity<Order>()
+                .HasOne(o => o.Product)
+                .WithMany()
+                .HasForeignKey(o => o.ProductId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // ✅ Seed Admin Role
+            var adminRole = new IdentityRole
+            {
+                Id = "1",
+                Name = "Admin",
+                NormalizedName = "ADMIN"
+            };
+
+            builder.Entity<IdentityRole>().HasData(adminRole);
+        }
     }
 }
