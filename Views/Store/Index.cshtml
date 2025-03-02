@@ -1,110 +1,111 @@
-﻿<body>
-    <!-- Preloader -->
-    <div id="preloader">
-        <div class="spinner"></div>
-    </div>
+﻿@model IEnumerable<Product>
+@{
+    ViewData["Title"] = "Store";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+    var categories = (ViewBag.Categories as List<string>) ?? new List<string>();
+    string selectedCategory = ViewBag.SelectedCategory as string;
+    string searchString = ViewBag.SearchString as string;
+    string priceSort = ViewBag.PriceSort as string;
+}
 
-    <!-- Store Content -->
-    @model IEnumerable<Product>
-    @{
-        ViewData["Title"] = "Store";
-        Layout = "~/Views/Shared/_Layout.cshtml";
-        var categories = (ViewBag.Categories as List<string>) ?? new List<string>();
-        string selectedCategory = ViewBag.SelectedCategory as string;
-        string searchString = ViewBag.SearchString as string;
-        string priceSort = ViewBag.PriceSort as string;
-    }
+<h2 class="text-center my-4">Store</h2>
 
-    <h2 class="text-center my-4">Store</h2>
-
-    <form method="get" id="filterForm" class="mb-4">
-        <div class="row">
-            <!-- Search Bar with Button -->
-            <div class="col-md-4">
-                <input type="text" name="searchString" id="searchInput" class="form-control" placeholder="Search products..." value="@searchString" />
-            </div>
-            <div class="col-md-2">
-                <button type="submit" class="btn btn-primary w-100">Search</button>
-            </div>
-            <!-- Category Dropdown -->
-            <div class="col-md-3">
-                <select name="category" id="categorySelect" class="form-control">
-                    <option value="">All Categories</option>
-                    @foreach (var cat in categories)
-                    {
-                        if (cat == selectedCategory)
-                        {
-                            <option value="@cat" selected="selected">@cat</option>
-                        }
-                        else
-                        {
-                            <option value="@cat">@cat</option>
-                        }
-                    }
-                </select>
-            </div>
-            <!-- Price Sort Dropdown -->
-            <div class="col-md-3">
-                <select name="priceSort" id="priceSortSelect" class="form-control">
-                    <option value="">Sort by Price</option>
-                    @if (priceSort == "asc")
-                    {
-                        <option value="asc" selected="selected">Ascending</option>
-                    }
-                    else
-                    {
-                        <option value="asc">Ascending</option>
-                    }
-                    @if (priceSort == "desc")
-                    {
-                        <option value="desc" selected="selected">Descending</option>
-                    }
-                    else
-                    {
-                        <option value="desc">Descending</option>
-                    }
-                </select>
-            </div>
+<form method="get" id="filterForm" class="mb-4">
+    <div class="row">
+        <!-- Search Bar with Button -->
+        <div class="col-md-4">
+            <input type="text" name="searchString" id="searchInput" class="form-control" placeholder="Search products..." value="@searchString" />
         </div>
-    </form>
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100">Search</button>
+        </div>
+        <!-- Category Dropdown -->
+        <div class="col-md-3">
+            <select name="category" id="categorySelect" class="form-control">
+                <option value="">All Categories</option>
+                @foreach (var cat in categories)
+                {
+                    if (cat == selectedCategory)
+                    {
+                        <option value="@cat" selected="selected">@cat</option>
+                    }
+                    else
+                    {
+                        <option value="@cat">@cat</option>
+                    }
+                }
+            </select>
+        </div>
+        <!-- Price Sort Dropdown -->
+        <div class="col-md-3">
+            <select name="priceSort" id="priceSortSelect" class="form-control">
+                <option value="">Sort by Price</option>
+                @if (priceSort == "asc")
+                {
+                    <option value="asc" selected="selected">Ascending</option>
+                }
+                else
+                {
+                    <option value="asc">Ascending</option>
+                }
+                @if (priceSort == "desc")
+                {
+                    <option value="desc" selected="selected">Descending</option>
+                }
+                else
+                {
+                    <option value="desc">Descending</option>
+                }
+            </select>
+        </div>
+    </div>
+</form>
 
-    <div class="container">
-        <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
-            @foreach (var product in Model)
-            {
-                <div class="col">
-                    <div class="card h-100">
-                        @if (!string.IsNullOrEmpty(product.ImageFileName))
-                        {
-                            <img src="~/products/@product.ImageFileName" class="card-img-top" alt="@product.Name" style="object-fit: cover; height: 200px;" />
-                        }
-                        else
-                        {
-                            <img src="~/images/placeholder.png" class="card-img-top" alt="No image available" style="object-fit: cover; height: 200px;" />
-                        }
-                        <div class="card-body d-flex flex-column">
-                            <h5 class="card-title">@product.Name</h5>
-                            <p class="card-text"><strong>Brand:</strong> @product.Brand</p>
-                            <p class="card-text"><strong>Category:</strong> @product.Category</p>
-                            <p class="card-text"><strong>Price:</strong> $@product.Price</p>
-                            <p class="card-text"><strong>Description:</strong> @product.Description</p>
-                            <div class="mt-auto">
-                                <a asp-controller="Product" asp-action="Detail" asp-route-id="@product.Id" class="btn btn-secondary me-2">View Details</a>
-                                <a asp-controller="Order" asp-action="Checkout" asp-route-productId="@product.Id" class="btn btn-primary">Buy Now</a>
-                            </div>
+<div class="container">
+    <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
+        @foreach (var product in Model)
+        {
+            <div class="col">
+                <div class="card h-100">
+                    @if (!string.IsNullOrEmpty(product.ImageFileName))
+                    {
+                        <img src="~/products/@product.ImageFileName" class="card-img-top" alt="@product.Name" style="object-fit: cover; height: 200px;" />
+                    }
+                    else
+                    {
+                        <img src="~/images/placeholder.png" class="card-img-top" alt="No image available" style="object-fit: cover; height: 200px;" />
+                    }
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title">@product.Name</h5>
+                        <p class="card-text"><strong>Brand:</strong> @product.Brand</p>
+                        <p class="card-text"><strong>Category:</strong> @product.Category</p>
+                        <p class="card-text"><strong>Price:</strong> $@product.Price</p>
+                        <p class="card-text"><strong>Description:</strong> @product.Description</p>
+                        <div class="mt-auto">
+                            <a asp-controller="Store" asp-action="Details" asp-route-id="@product.Id" class="btn btn-secondary me-2">View Details</a>
+                            <a asp-controller="Order" asp-action="Checkout" asp-route-productId="@product.Id" class="btn btn-primary">Buy Now</a>
                         </div>
                     </div>
                 </div>
-            }
-        </div>
+            </div>
+        }
     </div>
-</body>
+</div>
 
 @section Scripts {
     <script>
-        window.addEventListener('load', function () {
-            document.body.classList.add('loaded');
+        document.addEventListener('DOMContentLoaded', function () {
+            var form = document.getElementById('filterForm');
+            var categorySelect = document.getElementById('categorySelect');
+            var priceSortSelect = document.getElementById('priceSortSelect');
+
+            // Auto-submit when dropdowns change.
+            categorySelect.addEventListener('change', function () {
+                form.submit();
+            });
+            priceSortSelect.addEventListener('change', function () {
+                form.submit();
+            });
         });
     </script>
 }
-
