@@ -154,11 +154,21 @@ namespace UsersApp.Controllers
             {
                 return RedirectToAction("Index", "Products");
             }
+
             string imageFullPath = Path.Combine(_environment.WebRootPath, "products", product.ImageFileName);
             if (System.IO.File.Exists(imageFullPath))
             {
-                System.IO.File.Delete(imageFullPath);
+                try
+                {
+                    System.IO.File.Delete(imageFullPath);
+                }
+                catch (Exception ex)
+                {
+                    ModelState.AddModelError("", "Failed to delete the product image: " + ex.Message);
+                    return RedirectToAction("Index", "Products");
+                }
             }
+
             _context.Products.Remove(product);
             _context.SaveChanges();
 
