@@ -27,8 +27,6 @@ builder.Services.AddIdentity<Users, IdentityRole>(options =>
 
 var app = builder.Build();
 
-
-// Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
 {
     app.UseDeveloperExceptionPage();
@@ -38,6 +36,10 @@ else
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
 }
+
+app.UseStatusCodePagesWithRedirects("/Home/Error?statuscode={0}");
+
+
 
 app.UseHttpsRedirection();
 app.UseStaticFiles();
@@ -49,6 +51,8 @@ app.UseAuthorization();
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
+
+
 
 app.Run();
 

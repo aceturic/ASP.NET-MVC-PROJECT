@@ -14,9 +14,19 @@ namespace UsersApp.Controllers
             _logger = logger;
         }
 
-        public IActionResult Index()
+  
+
+        public ActionResult Index()
         {
-            return View();
+            // Sample data; replace with your data retrieval logic
+            var locations = new List<Location>
+        {
+            new Location { Name = "Location 1", Latitude = 40.712776, Longitude = -74.005974, Description = "Description for Location 1" },
+            new Location { Name = "Location 2", Latitude = 34.052235, Longitude = -118.243683, Description = "Description for Location 2" },
+            new Location { Name = "Location 3", Latitude = 51.507351, Longitude = -0.127758, Description = "Description for Location 3" }
+        };
+
+            return View(locations);
         }
 
         [Authorize]
@@ -26,9 +36,19 @@ namespace UsersApp.Controllers
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
-        public IActionResult Error()
+        public IActionResult Error(int statuscode)
         {
-            return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+            if (statuscode == 404)
+            {
+                return View("NotFound");
+            }
+            else
+            {
+
+
+                return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+
+            }
         }
     }
 }
