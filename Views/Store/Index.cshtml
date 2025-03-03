@@ -82,7 +82,7 @@
                         <p class="card-text"><strong>Price:</strong> $@product.Price</p>
                         <p class="card-text"><strong>Description:</strong> @product.Description</p>
                         <div class="mt-auto">
-                            <a asp-controller="Store" asp-action="Details" asp-route-id="@product.Id" class="btn btn-secondary me-2">View Details</a>
+                            <a asp-controller="ProductDetails" asp-action="Index" asp-route-id="@product.Id" class="btn btn-secondary me-2">View Details</a>
                             <a asp-controller="Order" asp-action="Checkout" asp-route-productId="@product.Id" class="btn btn-primary">Buy Now</a>
                         </div>
                     </div>

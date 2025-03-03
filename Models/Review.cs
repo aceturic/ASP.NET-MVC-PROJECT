@@ -1,19 +1,21 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 
 namespace UsersApp.Models
 {
     public class Review
     {
         public int Id { get; set; }
+
+        [Required]
         public int ProductId { get; set; }
 
-        [Required]
-        public string FullName { get; set; }
+        [Required, MaxLength(100)]
+        public string Author { get; set; }
 
         [Required]
-        [StringLength(1000)]
         public string Content { get; set; }
 
-        public DateTime DatePosted { get; set; } = DateTime.Now;
+        public DateTime CreatedAt { get; set; }
     }
 }

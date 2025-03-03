@@ -1,0 +1,83 @@
+﻿@model UsersApp.ViewModels.ProductDetailsViewModel
+
+@{
+    ViewBag.Title = "Product Details";
+}
+
+<section class="py-5">
+    <div class="container">
+        <!-- Product Details Section -->
+        <div class="row align-items-center">
+            <div class="col-md-6">
+                <h1 class="display-5 fw-bold">@Model.Product.Name</h1>
+                <p class="text-muted">@Model.Product.Brand • @Model.Product.Category</p>
+                <h3 class="text-success">@Model.Product.Price.ToString("C")</h3>
+                <p class="lead mt-3">@Model.Product.Description</p>
+                <a href="@Url.Action("Index", "Store")" class="btn btn-outline-secondary mt-3">
+                    <i class="bi bi-arrow-left"></i> Back to Products
+                </a>
+            </div>
+            <div class="col-md-6 text-center">
+                @if (!string.IsNullOrEmpty(Model.Product.ImageFileName))
+                {
+                    <img src="@Url.Content("~/products/" + Model.Product.ImageFileName)" alt="@Model.Product.Name" class="img-fluid rounded shadow" />
+                }
+            </div>
+        </div>
+
+        <hr class="my-5" />
+
+        <!-- Reviews Section -->
+        <div class="row">
+            <div class="col-12">
+                <h2 class="mb-4">Customer Reviews</h2>
+            </div>
+            <div class="col-12">
+                @if (Model.Reviews != null && Model.Reviews.Any())
+                {
+                    <div class="list-group">
+                        @foreach (var review in Model.Reviews)
+                        {
+                            <div class="list-group-item list-group-item-action mb-2">
+                                <div class="d-flex w-100 justify-content-between">
+                                    <h5 class="mb-1">@review.Author</h5>
+                                    <small class="text-muted">@review.CreatedAt.ToString("g")</small>
+                                </div>
+                                <p class="mb-1">@review.Content</p>
+                            </div>
+                        }
+                    </div>
+                }
+                else
+                {
+                    <p class="text-muted">No reviews yet. Be the first to review this product.</p>
+                }
+            </div>
+        </div>
+
+        <!-- Review Submission Form -->
+        <div class="row mt-5">
+            <div class="col-12">
+                <div class="card shadow-sm">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">Write a Review</h4>
+                    </div>
+                    <div class="card-body">
+                        <form asp-action="SubmitReview" method="post">
+                            <input type="hidden" name="ProductId" value="@Model.Product.Id" />
+                            <div class="mb-3">
+                                <label for="username" class="form-label">Your Name</label>
+                                <input type="text" name="Author" class="form-control" id="username" required placeholder="Enter your name" />
+                            </div>
+                            <div class="mb-3">
+                                <label for="content" class="form-label">Your Review</label>
+                                <textarea name="Content" class="form-control" id="content" rows="4" placeholder="Share your thoughts..." required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-success">Submit Review</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
