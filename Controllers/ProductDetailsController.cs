@@ -27,6 +27,13 @@ namespace UsersApp.Controllers
             var reviews = _context.Reviews
                 .Where(r => r.ProductId == id)
                 .OrderByDescending(r => r.CreatedAt)
+                .Select(r => new Review
+                {
+                    Author = r.Author,
+                    Content = r.Content,
+                    Rating = r.Rating, // Ensure rating is included
+                    CreatedAt = r.CreatedAt
+                })
                 .ToList();
 
             var viewModel = new ProductDetailsViewModel
@@ -48,8 +55,33 @@ namespace UsersApp.Controllers
                 _context.SaveChanges();
                 return RedirectToAction("Index", new { id = review.ProductId });
             }
-            // If review submission fails, you can reload the product details page.
-            return RedirectToAction("Index", new { id = review.ProductId });
+
+            // If validation fails, reload the product details page with existing data
+            var product = _context.Products.FirstOrDefault(p => p.Id == review.ProductId);
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            var reviews = _context.Reviews
+                .Where(r => r.ProductId == review.ProductId)
+                .OrderByDescending(r => r.CreatedAt)
+                .Select(r => new Review
+                {
+                    Author = r.Author,
+                    Content = r.Content,
+                    Rating = r.Rating,
+                    CreatedAt = r.CreatedAt
+                })
+                .ToList();
+
+            var viewModel = new ProductDetailsViewModel
+            {
+                Product = product,
+                Reviews = reviews
+            };
+
+            return View("Index", viewModel);
         }
     }
 }

@@ -27,6 +27,9 @@ namespace UsersApp.Models
         public string City { get; set; } // City
 
         [Required]
+        public string Country { get; set; } // City
+
+        [Required]
         public string ZipCode { get; set; } // Zip Code
 
         [ValidateNever]

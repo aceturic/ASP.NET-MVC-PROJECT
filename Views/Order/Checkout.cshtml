@@ -45,6 +45,12 @@
                 <input type="text" class="form-control bg-light" value="@Model.UserEmail" readonly />
             </div>
 
+                <div class="mb-3">
+                    <label class="form-label">Country</label>
+                    <input type="text" class="form-control" asp-for="Country" required placeholder="Enter your country" />
+                    <span asp-validation-for="Country" class="text-danger"></span>
+                </div>
+
             <div class="row">
                 <div class="col-md-6 mb-3">
                     <label class="form-label">City</label>

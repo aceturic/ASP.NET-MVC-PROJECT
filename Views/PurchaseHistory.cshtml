@@ -1,0 +1,29 @@
+﻿@model IEnumerable<UsersApp.Models.Order>
+
+@{
+    ViewData["Title"] = "Your Purchase History";
+}
+
+<h1>@ViewData["Title"]</h1>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Product Name</th>
+            <th>Price</th>
+            <th>Order Date</th>
+            <!-- Add more columns as needed -->
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var order in Model)
+        {
+            <tr>
+                <td>@order.Product.Name</td> <!-- Adjust based on your model relationships -->
+                <td>@order.Price</td>
+                <td>@order.OrderDate.ToString("MM/dd/yyyy")</td>
+                <!-- Add more columns as needed -->
+            </tr>
+        }
+    </tbody>
+</table>

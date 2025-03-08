@@ -6,9 +6,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using UsersApp.Data;
 using Microsoft.AspNetCore.Mvc.Rendering;
+using Microsoft.AspNetCore.Authorization;
 
 namespace UsersApp.Controllers
 {
+    [Authorize(Roles = "Admin")]
     public class PurchaseHistoryAdminController : Controller
     {
         private readonly AppDbContext _context;
