@@ -21,6 +21,11 @@ namespace UsersApp.Models
         public decimal Price { get; set; } // Product Price
 
         [Required]
+        public string FirstName { get; set; } // City
+        [Required]
+        public string LastName { get; set; } // City
+
+        [Required]
         public string DeliveryAddress { get; set; } // Shipping Address
 
         [Required]
@@ -31,6 +36,9 @@ namespace UsersApp.Models
 
         [Required]
         public string ZipCode { get; set; } // Zip Code
+
+        [Required]
+        public string PhoneNumber { get; set; }
 
         [ValidateNever]
         public string UserEmail { get; set; } // ✅ Store the user's email

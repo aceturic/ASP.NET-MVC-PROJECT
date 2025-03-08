@@ -144,6 +144,9 @@ namespace UsersApp.Controllers
 
             _context.SaveChanges();
 
+         TempData["SuccessMessage"] = "Successfully saved the changes.";
+
+
             return RedirectToAction("Index", "Products");
         }
 

@@ -47,10 +47,9 @@ namespace UsersApp.Controllers
             return View(order);
         }
 
-        // POST: PurchaseHistoryAdmin/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,ProductId,Price,DeliveryAddress,City,ZipCode,UserEmail,OrderDate")] Order order)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,ProductId,Price,FirstName,LastName,DeliveryAddress,City,Country,ZipCode,PhoneNumber,UserEmail,OrderDate")] Order order)
         {
             if (id != order.Id)
             {
@@ -72,11 +71,15 @@ namespace UsersApp.Controllers
                     }
                     else
                     {
-                        throw;
+                        ModelState.AddModelError("", "Concurrency error: The order was modified by another process.");
+                        return View(order);
                     }
                 }
+                TempData["SuccessMessage"] = "Order updated successfully!";
                 return RedirectToAction(nameof(Index));
             }
+
+            ViewBag.Products = new SelectList(await _context.Products.ToListAsync(), "Id", "Name", order.ProductId);
             return View(order);
         }
 

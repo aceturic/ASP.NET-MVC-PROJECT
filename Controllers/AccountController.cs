@@ -32,6 +32,7 @@ namespace UsersApp.Controllers
 
                 if (result.Succeeded)
                 {
+                    TempData["SuccessMessage"] = "Welcome back! You have successfully logged in.";
                     return RedirectToAction("Index", "Home");
                 }
                 else

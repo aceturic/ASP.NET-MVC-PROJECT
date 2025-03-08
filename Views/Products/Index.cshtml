@@ -45,3 +45,25 @@
         </tbody>
     </table>
 </div>
+
+@if (TempData["SuccessMessage"] != null)
+{
+    <div id="toast" class="toast-custom">
+        <div class="toast-content">
+            <span>@TempData["SuccessMessage"]</span>
+            <div class="progress-bar"></div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            let toast = document.getElementById("toast");
+            toast.classList.add("show");
+
+            setTimeout(() => {
+                toast.classList.remove("show");
+            }, 4000); // Hide after 4 seconds
+        });
+    </script>
+}
+
