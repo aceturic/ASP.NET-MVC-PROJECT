@@ -1,21 +1,171 @@
-﻿.account-container {
-    background-image: url('../images/account-bg.jpg');
-    background-size: cover;
-    background-position: center;
-    background-repeat: repeat-y;
+﻿body {
+    font-family: 'Roboto', sans-serif;
+    background: linear-gradient(-45deg, #6B73FF, #000DFF, #6B73FF, #8E2DE2);
+    background-size: 600% 600%;
+    animation: gradientAnimation 15s ease infinite;
+    margin: 0;
+    height: 100vh;
+    overflow: hidden;
+    position: relative;
+    opacity: 0;
+    animation: fadeIn 2s forwards;
+}
+
+#particles-js {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -1;
+}
+
+@keyframes gradientAnimation {
+    0% {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+.account-container {
+    width: 100%;
+    height: 100vh;
     display: flex;
-    justify-content: center;
     align-items: center;
-    min-height: 100vh;
-    padding: 2rem 0;
+    justify-content: center;
+    position: relative;
+    z-index: 1;
 }
 
 .account-box {
-    background-color: white;
-    padding: 30px;
-    border-radius: 10px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
-    max-width: 500px;
+    background: rgba(255, 255, 255, 0.85);
+    backdrop-filter: blur(10px);
+    border-radius: 12px;
     width: 100%;
-    opacity: .9;
+    max-width: 400px;
+    padding: 2rem;
+    transition: transform 0.2s ease-out, box-shadow 0.3s;
+}
+
+.form-control {
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+    .form-control:focus {
+        border-color: #4e73df;
+        animation: focusGlow 0.5s ease;
+        outline: none;
+    }
+
+@keyframes focusGlow {
+    0% {
+        box-shadow: 0 0 0px rgba(78, 115, 223, 0.7);
+    }
+
+    50% {
+        box-shadow: 0 0 10px 5px rgba(78, 115, 223, 0.3);
+    }
+
+    100% {
+        box-shadow: 0 0 0px rgba(78, 115, 223, 0.7);
+    }
+}
+
+.btn-primary {
+    background-color: #4e73df;
+    border-color: #4e73df;
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    font-weight: 500;
+    font-size: 1rem;
+    transition: transform 0.2s, background-color 0.3s;
+}
+
+    .btn-primary:hover {
+        background-color: #2e59d9;
+        border-color: #2653d4;
+        transform: scale(1.02);
+    }
+
+h2 {
+    font-weight: 700;
+    color: #333;
+}
+
+.form-check-input {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 20px;
+    height: 20px;
+    border: 2px solid #ccc;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: border-color 0.3s, background-color 0.3s, transform 0.3s;
+    position: relative;
+}
+
+    .form-check-input:checked {
+        border-color: #4e73df;
+        background-color: #4e73df;
+        animation: checkboxAnimation 0.3s ease-in-out;
+    }
+
+        .form-check-input:checked::after {
+            content: '\2713'; 
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 14px;
+        }
+
+@keyframes checkboxAnimation {
+    0% {
+        transform: scale(0.5);
+    }
+
+    50% {
+        transform: scale(1.2);
+    }
+
+    100% {
+        transform: scale(1);
+    }
+}
+
+.fade-in {
+    animation: fadeIn 1s ease-in;
+}
+
+.fade-out {
+    animation: fadeOut 1s ease-out;
+}
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+
+    100% {
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOut {
+    0% {
+        opacity: 1;
+    }
+
+    100% {
+        opacity: 0;
+    }
 }

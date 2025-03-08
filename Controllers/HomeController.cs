@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 using UsersApp.Models;
+using UsersApp.ViewModels;
 
 namespace UsersApp.Controllers
 {
@@ -18,7 +19,20 @@ namespace UsersApp.Controllers
 
         public ActionResult Index()
         {
-            // Sample data; replace with your data retrieval logic
+            var user = new UserViewModel
+            {
+                Id = "123",
+                Email = "test@example.com",
+                Name = "Test User"
+            };
+            var order = new Order
+            {
+                Id = 456
+            };
+            var review = new Review
+            {
+                Id = 789
+            };
             var locations = new List<Location>
         {
             new Location { Name = "Location 1", Latitude = 40.712776, Longitude = -74.005974, Description = "Description for Location 1" },
@@ -50,5 +64,6 @@ namespace UsersApp.Controllers
 
             }
         }
+     
     }
 }

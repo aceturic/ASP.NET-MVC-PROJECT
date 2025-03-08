@@ -20,6 +20,14 @@
             }
 
         h1 {
+             text-align: center;
+            font-weight: 700;
+            color: #4CAF50;
+            margin: 0;
+            animation: fadeIn 2s ease-out forwards;
+        }
+
+        h2 {
             font-weight: 700;
             color: #4CAF50;
             margin-top: 30px;
@@ -27,7 +35,7 @@
             transition: transform 0.3s ease;
         }
 
-            h1:hover {
+            h2:hover {
                 transform: scale(1);
             }
 
@@ -119,12 +127,10 @@
             map = new google.maps.Map(document.getElementById('map-canvas'), mapOptions);
             infoWindow = new google.maps.InfoWindow();
 
-            // Add markers for each location
             var locations = [
                 { name: 'Store 1', latitude: 40.7128, longitude: -74.0060 },
                 { name: 'Store 2', latitude: 34.0522, longitude: -118.2437 },
                 { name: 'Store 3', latitude: 51.5074, longitude: -0.1278 }
-                // Add more locations as needed
             ];
 
             locations.forEach(function(location) {
@@ -145,7 +151,7 @@
             });
         }
 
-        // Ensure the page has loaded before initializing the map
+
         window.onload = function() {
             document.body.classList.add('loaded');
             initialize();
@@ -153,10 +159,8 @@
     </script>
 </head>
 <body>
-    <div id="preloader">
-        <div class="spinner"></div>
-    </div>
-    <h1>Our Stores</h1>
+    <h1>MyStore</h1>
+    <h2>Our Stores</h2>
     <div class="contact-info">
         <p>
             <a href="tel:+1-800-555-5555">+1-800-555-5555</a> |
