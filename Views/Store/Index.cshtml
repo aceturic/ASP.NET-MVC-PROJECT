@@ -9,82 +9,72 @@
 }
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 
-<h2 class="text-center my-4">Store</h2>
+<h2 class="text-center my-4 fw-bold text-primary">Store</h2>
 
+<!-- Modernized Search & Filter Form -->
 <form method="get" id="filterForm" class="mb-4">
-    <div class="row">
-        <!-- Search Bar with Button -->
-        <div class="col-md-4">
-            <input type="text" name="searchString" id="searchInput" class="form-control" placeholder="Search products..." value="@searchString" />
-        </div>
-        <div class="col-md-2">
-            <button type="submit" class="btn btn-primary w-100">Search</button>
+    <div class="row g-3 align-items-center">
+        <!-- Search Bar with Icon -->
+        <div class="col-md-4 position-relative">
+            <div class="input-group">
+                <span class="input-group-text bg-primary text-white"><i class="fas fa-search"></i></span>
+                <input type="text" name="searchString" id="searchInput" class="form-control shadow-sm"
+                       placeholder="Search products..." value="@searchString" />
+            </div>
         </div>
         <!-- Category Dropdown -->
         <div class="col-md-3">
-            <select name="category" id="categorySelect" class="form-control">
+            <select name="category" id="categorySelect" class="form-select shadow-sm">
                 <option value="">All Categories</option>
                 @foreach (var cat in categories)
                 {
-                    if (cat == selectedCategory)
-                    {
-                        <option value="@cat" selected="selected">@cat</option>
-                    }
-                    else
-                    {
-                        <option value="@cat">@cat</option>
-                    }
+                    <option value="@cat" selected="@(cat == selectedCategory ? "selected" : null)">@cat</option>
                 }
             </select>
         </div>
         <!-- Price Sort Dropdown -->
         <div class="col-md-3">
-            <select name="priceSort" id="priceSortSelect" class="form-control">
+            <select name="priceSort" id="priceSortSelect" class="form-select shadow-sm">
                 <option value="">Sort by Price</option>
-                @if (priceSort == "asc")
-                {
-                    <option value="asc" selected="selected">Ascending</option>
-                }
-                else
-                {
-                    <option value="asc">Ascending</option>
-                }
-                @if (priceSort == "desc")
-                {
-                    <option value="desc" selected="selected">Descending</option>
-                }
-                else
-                {
-                    <option value="desc">Descending</option>
-                }
+                <option value="asc" selected="@(priceSort == "asc" ? "selected" : null)">Price: Low to High</option>
+                <option value="desc" selected="@(priceSort == "desc" ? "selected" : null)">Price: High to Low</option>
             </select>
+        </div>
+        <!-- Search Button -->
+        <div class="col-md-2">
+            <button type="submit" class="btn btn-primary w-100 shadow-sm">Search</button>
         </div>
     </div>
 </form>
 
+<!-- Product Grid -->
 <div class="container">
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         @foreach (var product in Model)
         {
             <div class="col">
-                <div class="card h-100">
+                <div class="card h-100 shadow-sm border-0 rounded-3">
                     @if (!string.IsNullOrEmpty(product.ImageFileName))
                     {
-                        <img src="~/products/@product.ImageFileName" class="card-img-top" alt="@product.Name" style="object-fit: cover; height: 200px;" />
+                        <img src="~/products/@product.ImageFileName" class="card-img-top" alt="@product.Name"
+                             style="object-fit: cover; height: 200px; border-radius: 8px 8px 0 0;" />
                     }
                     else
                     {
-                        <img src="~/images/placeholder.png" class="card-img-top" alt="No image available" style="object-fit: cover; height: 200px;" />
+                        <img src="~/images/placeholder.png" class="card-img-top" alt="No image available"
+                             style="object-fit: cover; height: 200px; border-radius: 8px 8px 0 0;" />
                     }
                     <div class="card-body d-flex flex-column">
-                        <h5 class="card-title">@product.Name</h5>
+                        <h5 class="card-title fw-bold">@product.Name</h5>
                         <p class="card-text"><strong>Brand:</strong> @product.Brand</p>
                         <p class="card-text"><strong>Category:</strong> @product.Category</p>
-                        <p class="card-text"><strong>Price:</strong> $@product.Price</p>
+                        <p class="card-text"><strong>Price:</strong> <span class="text-success fw-bold">$@product.Price</span></p>
                         <p class="card-text"><strong>Description:</strong> @product.Description</p>
                         <div class="mt-auto">
-                            <a asp-controller="ProductDetails" asp-action="Index" asp-route-id="@product.Id" class="btn btn-secondary me-2">View Details</a>
-                            <a asp-controller="Order" asp-action="Checkout" asp-route-productId="@product.Id" class="btn btn-primary">Buy Now</a>
+                            <a asp-controller="ProductDetails" asp-action="Index" asp-route-id="@product.Id"
+                               class="btn btn-outline-secondary me-2"><i class="fas fa-info-circle"></i> Details</a>
+                            <a asp-controller="Order" asp-action="Checkout" asp-route-productId="@product.Id"
+                               class="btn btn-primary"><i class="fas fa-shopping-cart"></i> Buy Now</a>
                         </div>
                     </div>
                 </div>
@@ -92,8 +82,6 @@
         }
     </div>
 </div>
-
-
 
 @section Scripts {
     <script>
@@ -112,3 +100,92 @@
         });
     </script>
 }
+
+<!-- Modern Styles -->
+<style>
+    /* Dark Mode & Light Mode */
+    :root {
+        --bg-light: #f8f9fa;
+        --bg-dark: #121212;
+        --card-light: white;
+        --card-dark: #1c1c1c;
+        --text-light: #333;
+        --text-dark: #f8f9fa;
+        --primary-light: #007bff;
+        --primary-dark: #00c8ff;
+        --border-light: #ddd;
+        --border-dark: #444;
+    }
+
+    body {
+        background-color: var(--bg-light);
+        color: var(--text-light);
+        transition: all 0.3s ease-in-out;
+    }
+
+    media (prefers-color-scheme: dark) {
+        body
+
+    {
+        background-color: var(--bg-dark);
+        color: var(--text-dark);
+    }
+
+    .card {
+        background: var(--card-dark);
+        border: 1px solid var(--border-dark);
+        box-shadow: 0px 4px 10px rgba(0, 200, 255, 0.2);
+    }
+
+    .btn-primary {
+        background: var(--primary-dark);
+        border-color: var(--primary-dark);
+    }
+
+    .btn-outline-secondary {
+        color: var(--primary-dark);
+        border-color: var(--primary-dark);
+    }
+
+        .btn-outline-secondary:hover {
+            background: var(--primary-dark);
+            color: white;
+        }
+
+    }
+
+    /* Search & Filter Styling */
+    .input-group-text {
+        border-radius: 50px 0 0 50px;
+    }
+
+    .form-control {
+        border-radius: 50px;
+        transition: 0.2s;
+    }
+
+        .form-control:focus {
+            box-shadow: 0 0 10px var(--primary-light);
+            border-color: var(--primary-light);
+        }
+
+    .btn-primary {
+        border-radius: 50px;
+        transition: 0.2s;
+    }
+
+        .btn-primary:hover {
+            box-shadow: 0 0 10px var(--primary-light);
+        }
+
+    /* Product Card */
+    .card {
+        border-radius: 15px;
+        transition: 0.3s;
+    }
+
+        .card:hover {
+            transform: scale(1.02);
+            box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.15);
+        }
+</style>
