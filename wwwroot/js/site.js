@@ -2,6 +2,7 @@
     const toggleButton = document.getElementById("darkModeToggle");
     const body = document.body;
 
+    // Retrieve the user's theme preference from localStorage
     const currentTheme = localStorage.getItem("theme") || "light";
     if (currentTheme === "dark") {
         body.classList.add("dark-mode");
@@ -11,20 +12,17 @@
         toggleButton.textContent = "🌙";
     }
 
-
-
+    // Add event listener to the toggle button
     toggleButton.addEventListener("click", function () {
-        if (body.classList.contains("dark-mode")) {
-            body.classList.remove("dark-mode");
-            localStorage.setItem("theme", "light");
-            toggleButton.textContent = "🌙";
-        } else {
-            body.classList.add("dark-mode");
-            localStorage.setItem("theme", "dark");
-            toggleButton.textContent = "☀️";
-        }
+        body.classList.toggle("dark-mode");
+        const isDarkMode = body.classList.contains("dark-mode");
+
+        // Update localStorage and button text based on the current mode
+        localStorage.setItem("theme", isDarkMode ? "dark" : "light");
+        toggleButton.textContent = isDarkMode ? "☀️" : "🌙";
     });
 });
+
 
 document.addEventListener('DOMContentLoaded', function () {
     const links = document.querySelectorAll('a');
