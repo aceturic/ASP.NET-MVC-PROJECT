@@ -19,6 +19,12 @@
                 <a asp-controller="Order" asp-action="Checkout" asp-route-productId="@Model.Product.Id" class="btn btn-outline-secondary mt-3">
                     Buy Now
                 </a>
+                <button class="favorite-btn btn btn-light border-0 p-2 mt-3" id="favorite-btn-@Model.Product.Id"
+                        data-product-id="@Model.Product.Id" title="Add to Favorites">
+                    <i class="fas fa-heart text-secondary fs-4"></i>
+                </button>
+
+
             </div>
             <div class="col-md-6 text-center">
                 @if (!string.IsNullOrEmpty(Model.Product.ImageFileName))
@@ -119,13 +125,11 @@
                     {
                         <div class="col-md-3 col-sm-6 mb-4">
                             <div class="card shadow-sm h-100">
-                                <!-- Ensures all cards have the same height -->
                                 <img src="@Url.Content("~/products/" + relatedProduct.ImageFileName)" class="card-img-top" alt="@relatedProduct.Name">
                                 <div class="card-body d-flex flex-column text-center">
                                     <h5 class="card-title">@relatedProduct.Name</h5>
                                     <p class="text-success">@relatedProduct.Price.ToString("C")</p>
                                     <div class="mt-auto">
-                                        <!-- Push button to the bottom -->
                                         <a asp-controller="ProductDetails" asp-action="Index" asp-route-id="@relatedProduct.Id"
                                            class="btn btn-outline-secondary btn-sm">
                                             <i class="fas fa-info-circle"></i> Details
@@ -142,6 +146,15 @@
                 <p class="text-muted">No related products found.</p>
             }
         </div>
+
+       
+<div id="toast-notification" class="toast align-items-center text-white bg-success border-0 position-fixed bottom-0 end-0 m-3" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="d-flex">
+        <div class="toast-body">Product added to Favorites!</div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+</div>
+
 
     </div>
 </section>
@@ -164,19 +177,19 @@
     }
 
         .card img {
-            height: 200px; /* Set a fixed height for images */
-            object-fit: cover; /* Ensures images are cropped to fit */
+            height: 200px; 
+            object-fit: cover; 
         }
 
     .card-body {
-        flex-grow: 1; /* Ensures text takes up available space */
+        flex-grow: 1;
         display: flex;
         flex-direction: column;
         justify-content: space-between;
     }
 
     .card .btn {
-        width: 100%; /* Makes the button full width for better appearance */
+        width: 100%; 
     }
 </style>
 
@@ -196,4 +209,49 @@
             });
         });
     });
+
+    document.addEventListener("DOMContentLoaded", function () {
+        let button = document.getElementById("favorite-btn-@Model.Product.Id");
+        let icon = button.querySelector("i");
+        let productId = button.getAttribute("data-product-id");
+
+        fetch(`/Favorites/IsFavorite/${productId}`)
+            .then(response => response.json())
+            .then(data => {
+                if (data.isFavorite) {
+                    icon.classList.remove("text-secondary", "text-danger");
+                    icon.classList.add("text-success");
+                    button.setAttribute("disabled", "true");
+                    button.setAttribute("title", "Already in Favorites");
+                } else {
+                    icon.classList.remove("text-secondary");
+                    icon.classList.add("text-danger");
+                    button.setAttribute("title", "Add to Favorites");
+                }
+            });
+
+        button.addEventListener("click", function () {
+            fetch(`/Favorites/AddToFavorites`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ productId: parseInt(productId) })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    icon.classList.remove("text-danger");
+                    icon.classList.add("text-success");
+                    button.setAttribute("disabled", "true");
+                    button.setAttribute("title", "Already in Favorites");
+
+                    let toast = new bootstrap.Toast(document.getElementById('toast-notification'));
+                    toast.show();
+                } else {
+                    alert(data.message);
+                }
+            })
+            .catch(error => console.error("Error:", error));
+        });
+    });
 </script>
+
