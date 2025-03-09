@@ -15,12 +15,15 @@ namespace UsersApp.Data
         public DbSet<Order> Orders { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Review> Reviews { get; set; }
+          public DbSet<Favorite> Favorites { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
-            // ✅ Ensuring unique constraints and relationships
+            builder.Entity<Favorite>()
+                           .HasIndex(f => new { f.ProductId })
+                           .IsUnique();
 
             builder.Entity<Product>()
                 .HasMany(p => p.Reviews)

@@ -15,6 +15,8 @@ namespace UsersApp.Models
         public decimal Price { get; set; }
         [Required]
         public string Description { get; set; } = "";
+        [Required]
+        public int Quantity { get; set; }
         public IFormFile? ImageFile { get; set; }
     }
 }

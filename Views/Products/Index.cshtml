@@ -4,6 +4,7 @@
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
 <h2 class="text-center mb-5">List of Products</h2>
 
 <div class="d-flex justify-content-end mb-3">
@@ -19,6 +20,7 @@
                 <th>Brand</th>
                 <th>Category</th>
                 <th>Price</th>
+                <th>Quantity</th>
                 <th>Image</th>
                 <th>Created At</th>
                 <th>Action</th>
@@ -33,13 +35,15 @@
                     <td>@product.Brand</td>
                     <td>@product.Category</td>
                     <td>@(product.Price)$</td>
+                    <td>@product.Quantity</td> <!-- ✅ Quantity is now displayed -->
                     <td>
                         <img src="~/products/@product.ImageFileName" alt="@product.Name" style="max-width: 100px;" />
                     </td>
                     <td>@product.CreatedAt.ToString("MM/dd/yyyy")</td>
                     <td>
                         <a class="btn btn-sm btn-primary" asp-controller="Products" asp-action="Edit" asp-route-id="@product.Id">Edit</a>
-                       <a class="btn btn-sm btn-danger" asp-controller="Products" asp-action="Delete" asp-route-id="@product.Id" onclick="return confirm('Are you sure?')">Delete</a> 
+                        <a class="btn btn-sm btn-danger" asp-controller="Products" asp-action="Delete" asp-route-id="@product.Id" onclick="return confirm('Are you sure?')">Delete</a>
+                    </td>
                 </tr>
             }
         </tbody>
@@ -66,4 +70,3 @@
         });
     </script>
 }
-

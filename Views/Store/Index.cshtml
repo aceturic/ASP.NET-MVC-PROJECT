@@ -52,6 +52,11 @@
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         @foreach (var product in Model)
         {
+            <!-- Determine the badge color based on quantity -->
+            var quantityClass = product.Quantity <= 20 ? "bg-danger" :
+            product.Quantity <= 42 ? "bg-warning" :
+            "bg-success";
+
             <div class="col">
                 <div class="card h-100 shadow-sm border-0 rounded-3">
                     @if (!string.IsNullOrEmpty(product.ImageFileName))
@@ -69,6 +74,19 @@
                         <p class="card-text"><strong>Brand:</strong> @product.Brand</p>
                         <p class="card-text"><strong>Category:</strong> @product.Category</p>
                         <p class="card-text"><strong>Price:</strong> <span class="text-success fw-bold">$@product.Price</span></p>
+
+                        <!-- Quantity Display with Dynamic Color -->
+                        <p class="card-text">
+                            <strong>Quantity:</strong>
+                            <span class="badge @quantityClass">@product.Quantity</span>
+                        </p>
+
+                      
+                            <button class="btn btn-outline-danger favorite-btn" data-product-id="@product.Id">
+                                <i class="fas fa-heart"></i> Add to Favorites
+                            </button>
+                        
+
                         <p class="card-text"><strong>Description:</strong> @product.Description</p>
                         <div class="mt-auto">
                             <a asp-controller="ProductDetails" asp-action="Index" asp-route-id="@product.Id"
@@ -188,4 +206,52 @@
             transform: scale(1.02);
             box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.15);
         }
+
+    /* Quantity Badge Colors */
+    .badge {
+        font-size: 14px;
+        padding: 5px 10px;
+    }
+
+    .bg-danger {
+        background-color: #dc3545 !important;
+    }
+
+    .bg-warning {
+        background-color: #ffc107 !important;
+        color: black !important;
+    }
+
+    .bg-success {
+        background-color: #28a745 !important;
+    }
 </style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+           document.querySelectorAll(".favorite-btn").forEach(button => {
+               button.addEventListener("click", function () {
+                   let productId = this.getAttribute("data-product-id");
+
+                   fetch(`/Favorites/AddToFavorites`, {
+                       method: "POST",
+                       headers: {
+                           "Content-Type": "application/json"
+                       },
+                       body: JSON.stringify({ productId: parseInt(productId) })
+                   })
+                   .then(response => response.json())
+                   .then(data => {
+                       if (data.success) {
+                           this.innerHTML = '<i class="fas fa-heart"></i> Added!';
+                           this.classList.add("btn-success");
+                           this.classList.remove("btn-outline-danger");
+                       } else {
+                           alert(data.message);
+                       }
+                   })
+                   .catch(error => console.error("Error:", error));
+               });
+           });
+       });
+</script>

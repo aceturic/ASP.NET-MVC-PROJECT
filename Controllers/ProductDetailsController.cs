@@ -31,15 +31,23 @@ namespace UsersApp.Controllers
                 {
                     Author = r.Author,
                     Content = r.Content,
-                    Rating = r.Rating, // Ensure rating is included
+                    Rating = r.Rating,
                     CreatedAt = r.CreatedAt
                 })
+                .ToList();
+
+            // Fetch related products from the same category, excluding the current product
+            var relatedProducts = _context.Products
+                .Where(p => p.Category == product.Category && p.Id != product.Id)
+                .OrderBy(p => Guid.NewGuid()) // Randomize products
+                .Take(4) // Limit to 4 related products
                 .ToList();
 
             var viewModel = new ProductDetailsViewModel
             {
                 Product = product,
-                Reviews = reviews
+                Reviews = reviews,
+                RelatedProducts = relatedProducts
             };
 
             return View(viewModel);
@@ -66,19 +74,18 @@ namespace UsersApp.Controllers
             var reviews = _context.Reviews
                 .Where(r => r.ProductId == review.ProductId)
                 .OrderByDescending(r => r.CreatedAt)
-                .Select(r => new Review
-                {
-                    Author = r.Author,
-                    Content = r.Content,
-                    Rating = r.Rating,
-                    CreatedAt = r.CreatedAt
-                })
+                .ToList();
+
+            var relatedProducts = _context.Products
+                .Where(p => p.Category == product.Category && p.Id != product.Id)
+                .Take(4)
                 .ToList();
 
             var viewModel = new ProductDetailsViewModel
             {
                 Product = product,
-                Reviews = reviews
+                Reviews = reviews,
+                RelatedProducts = relatedProducts
             };
 
             return View("Index", viewModel);

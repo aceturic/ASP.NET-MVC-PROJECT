@@ -62,6 +62,7 @@ namespace UsersApp.Controllers
                 Brand = productDto.Brand,
                 Category = productDto.Category,
                 Price = productDto.Price,
+                Quantity = productDto.Quantity,
                 Description = productDto.Description,
                 ImageFileName = newFileName,
                 CreatedAt = DateTime.Now
@@ -85,6 +86,7 @@ namespace UsersApp.Controllers
                 Name = product.Name,
                 Brand = product.Brand,
                 Category = product.Category,
+                Quantity = product.Quantity,
                 Price = product.Price,
                 Description = product.Description,
             };
@@ -139,6 +141,7 @@ namespace UsersApp.Controllers
             product.Brand = productDto.Brand;
             product.Category = productDto.Category;
             product.Price = productDto.Price;
+            product.Quantity = productDto.Quantity;
             product.Description = productDto.Description;
             product.ImageFileName = newFileName;
 
