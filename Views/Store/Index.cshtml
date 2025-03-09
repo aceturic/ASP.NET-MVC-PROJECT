@@ -88,12 +88,21 @@
                         <div class="mt-auto">
                             <a asp-controller="ProductDetails" asp-action="Index" asp-route-id="@product.Id"
                                class="btn btn-outline-secondary me-2"><i class="fas fa-info-circle"></i> Details</a>
-                            <a asp-controller="Order" asp-action="Checkout" asp-route-productId="@product.Id"
-                               class="btn btn-primary"><i class="fas fa-shopping-cart"></i> Buy Now</a>
+                            @if (product.Quantity > 0)
+                            {
+                                <a asp-controller="Order" asp-action="Checkout" asp-route-productId="@product.Id"
+                                   class="btn btn-primary">
+                                    <i class="fas fa-shopping-cart"></i> Buy Now
+                                </a>
+                            }
+                            else
+                            {
+                                <button class="btn btn-secondary" disabled>Out of Stock</button>
+                            }
+                        </div>
                         </div>
                     </div>
                 </div>
-            </div>
         }
     </div>
 </div>
@@ -101,6 +110,13 @@
 <div id="toast-notification" class="toast align-items-center text-white bg-success border-0 position-fixed bottom-0 end-0 m-3" role="alert" aria-live="assertive" aria-atomic="true">
     <div class="d-flex">
         <div class="toast-body">The product was successfully added!</div>
+        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+    </div>
+</div>
+
+<div id="cart-toast-notification" class="toast align-items-center text-white bg-primary border-0 position-fixed bottom-0 end-0 m-3" role="alert" aria-live="assertive" aria-atomic="true">
+    <div class="d-flex">
+        <div class="toast-body">Product added to cart successfully!</div>
         <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
     </div>
 </div>
@@ -301,4 +317,37 @@ document.addEventListener('DOMContentLoaded', function () {
             });
         });
     });
+
+         document.addEventListener('DOMContentLoaded', function () {
+            document.querySelectorAll(".add-to-cart-btn").forEach(button => {
+                button.addEventListener("click", function () {
+                    let productId = this.getAttribute("data-product-id");
+                    let productName = this.getAttribute("data-product-name");
+                    let productPrice = this.getAttribute("data-product-price");
+                    let productImage = this.getAttribute("data-product-image");
+
+                    fetch(`/Cart/AddToCart`, {
+                        method: "POST",
+                        headers: { "Content-Type": "application/json" },
+                        body: JSON.stringify({
+                            productId: parseInt(productId),
+                            name: productName,
+                            price: parseFloat(productPrice),
+                            imageFileName: productImage
+                        })
+                    })
+                    .then(response => response.json())
+                    .then(data => {
+                        if (data.success) {
+                            // Show toast notification
+                            let toast = new bootstrap.Toast(document.getElementById('cart-toast-notification'));
+                            toast.show();
+                        } else {
+                            alert(data.message);
+                        }
+                    })
+                    .catch(error => console.error("Error:", error));
+                });
+            });
+        });
 </script>

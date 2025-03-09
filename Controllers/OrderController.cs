@@ -22,10 +22,8 @@ namespace UsersApp.Controllers
             _signInManager = signInManager;
         }
 
-        // GET: Checkout
         public async Task<IActionResult> Checkout(int productId)
         {
-            // ✅ Redirect to login if user is not authenticated
             if (!_signInManager.IsSignedIn(User))
             {
                 return RedirectToAction("Login", "Account");
@@ -37,18 +35,16 @@ namespace UsersApp.Controllers
                 return NotFound();
             }
 
-            // ✅ Check stock before proceeding to checkout
             if (product.Quantity <= 0)
             {
                 TempData["ErrorMessage"] = "This product is out of stock.";
                 return RedirectToAction("Index", "Store");
             }
 
-            // ✅ Get the current logged-in user's email
             var user = await _userManager.GetUserAsync(User);
             if (user?.Email == null)
             {
-                return RedirectToAction("Login", "Account"); // Redirect to login if no email
+                return RedirectToAction("Login", "Account"); 
             }
 
             var order = new Order
@@ -56,13 +52,13 @@ namespace UsersApp.Controllers
                 ProductId = product.Id,
                 Product = product,
                 Price = product.Price,
-                UserEmail = user.Email // ✅ Automatically set user email
+                UserEmail = user.Email 
             };
 
             return View(order);
         }
 
-        // POST: Confirm Order (Reduces Stock)
+    
         [HttpPost]
         public async Task<IActionResult> ConfirmOrder(Order order)
         {
@@ -72,27 +68,25 @@ namespace UsersApp.Controllers
                 return View("Checkout", order);
             }
 
-            // Ensure the product exists before saving
             var product = await _context.Products.FirstOrDefaultAsync(p => p.Id == order.ProductId);
             if (product == null)
             {
                 return NotFound();
             }
 
-            // ✅ Prevent purchase if the stock is insufficient
+           
             if (product.Quantity <= 0)
             {
                 TempData["ErrorMessage"] = "This product is out of stock.";
                 return RedirectToAction("Index", "Store");
             }
 
-            // ✅ Deduct 1 from the product quantity
+           
             product.Quantity -= 1;
 
-            // ✅ Save the updated stock
+            
             _context.Products.Update(product);
 
-            // ✅ Check if the user is logged in before saving the order
             var user = await _userManager.GetUserAsync(User);
             if (user?.Email == null)
             {
@@ -101,7 +95,7 @@ namespace UsersApp.Controllers
 
             order.Product = product;
             order.Price = product.Price;
-            order.UserEmail = user.Email; // ✅ Store the user's email
+            order.UserEmail = user.Email;
             order.OrderDate = DateTime.Now;
 
             _context.Orders.Add(order);
