@@ -6,6 +6,7 @@ using UsersApp.Models;
 using System;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Security.Claims;
 
 namespace UsersApp.Controllers
 {
@@ -103,6 +104,24 @@ namespace UsersApp.Controllers
 
             TempData["SuccessMessage"] = "Your order has been placed successfully!";
             return RedirectToAction("OrderSuccess");
+        }
+
+        public async Task<IActionResult> PurchaseHistory()
+        {
+            var userEmail = User.FindFirstValue(ClaimTypes.Email);
+
+            if (string.IsNullOrEmpty(userEmail))
+            {
+                return Unauthorized(); // Ensure user is logged in
+            }
+
+            var orders = await _context.Orders
+                .Include(o => o.Product) // Include product details
+                .Where(o => o.UserEmail == userEmail)
+                .OrderByDescending(o => o.OrderDate)
+                .ToListAsync();
+
+            return View(orders);
         }
 
         public IActionResult OrderSuccess()

@@ -1,0 +1,42 @@
+﻿@model List<UsersApp.Models.Order>
+
+@{
+    ViewData["Title"] = "Your Purchase History";
+}
+
+<h2>Your Purchase History</h2>
+
+@if (!string.IsNullOrEmpty(ViewBag.Message))
+{
+    <p>@ViewBag.Message</p>
+}
+else if (Model == null || !Model.Any())
+{
+    <p>You have no purchase history.</p>
+}
+else
+{
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Order ID</th>
+                <th>Product</th>
+                <th>Price</th>
+                <th>Order Date</th>
+                <th>Delivery Address</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var order in Model)
+            {
+                <tr>
+                    <td>@order.Id</td>
+                    <td>@(order.Product != null ? order.Product.Name : "Unknown Product")</td>
+                    <td>@order.Price.ToString("C")</td>
+                    <td>@order.OrderDate.ToString("yyyy-MM-dd")</td>
+                    <td>@order.DeliveryAddress, @order.City, @order.Country</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}

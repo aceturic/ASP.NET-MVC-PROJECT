@@ -8,41 +8,41 @@ namespace UsersApp.Models
     public class Order
     {
         [Key]
-        public int Id { get; set; } // Unique order ID
+        public int Id { get; set; } 
 
-        [Required] // Ensure this field is populated
-        public int ProductId { get; set; } // Foreign key to Product
+        [Required] 
+        public int ProductId { get; set; }
 
         [ForeignKey("ProductId")]
         [ValidateNever]
-        public virtual Product Product { get; set; } // Navigation property
+        public virtual Product Product { get; set; } 
 
         [Required]
-        public decimal Price { get; set; } // Product Price
+        public decimal Price { get; set; }
 
         [Required]
-        public string FirstName { get; set; } // City
+        public string FirstName { get; set; } 
         [Required]
-        public string LastName { get; set; } // City
+        public string LastName { get; set; }
 
         [Required]
-        public string DeliveryAddress { get; set; } // Shipping Address
+        public string DeliveryAddress { get; set; } 
 
         [Required]
-        public string City { get; set; } // City
+        public string City { get; set; } 
 
         [Required]
-        public string Country { get; set; } // City
+        public string Country { get; set; }
 
         [Required]
-        public string ZipCode { get; set; } // Zip Code
+        public string ZipCode { get; set; }
 
         [Required]
         public string PhoneNumber { get; set; }
 
         [ValidateNever]
-        public string UserEmail { get; set; } // ✅ Store the user's email
+        public string UserEmail { get; set; } 
 
-        public DateTime OrderDate { get; set; } = DateTime.Now; // Auto-filled date
+        public DateTime OrderDate { get; set; } = DateTime.Now; 
     }
 }

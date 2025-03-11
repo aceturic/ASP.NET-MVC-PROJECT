@@ -2,8 +2,10 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using UsersApp.Data;
 using UsersApp.Models;
+using UsersApp.Services;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddScoped<OrderService>();
 
 builder.Services.AddControllersWithViews();
 builder.Services.AddSession(options =>
@@ -65,6 +67,11 @@ app.Run();
 
 app.UseEndpoints(endpoints =>
 {
+    endpoints.MapControllerRoute(
+       name: "purchaseHistory",
+       pattern: "PurchaseHistory/{action=Index}/{id?}",
+       defaults: new { controller = "PurHistory", action = "Index" });
+
     endpoints.MapControllerRoute(
         name: "default",
         pattern: "{controller=Home}/{action=Index}/{id?}");
