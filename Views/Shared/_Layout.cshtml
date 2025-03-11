@@ -28,6 +28,14 @@
                                 <i class="fas fa-home"></i> Home
                             </a>
                         </li>
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Order" asp-action="PurchaseHistory">
+                                    <i class="fas fa-shopping-bag"></i> My Orders
+                                </a>
+                            </li>
+                        }
 
                         @if (User .Identity.IsAuthenticated && User.IsInRole("Admin"))
                         {
@@ -44,6 +52,11 @@
                             <li class="nav-item">
                                 <a class="nav-link" asp-controller="PurchaseHistoryAdmin" asp-action="Index">
                                     <i class="fas fa-history"></i> Purchase Control
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" asp-controller="Admin" asp-action="CancelRequests">
+                                    <i class="fas fa-ban"></i> Cancel Requests
                                 </a>
                             </li>
                         }

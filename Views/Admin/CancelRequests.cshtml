@@ -1,0 +1,51 @@
+﻿@model List<UsersApp.Models.Order>
+
+@{
+    ViewData["Title"] = "Cancel Requests";
+}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+<div class="container mt-4">
+    <h2 class="text-center">🛑 Order Cancellation Requests</h2>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center">
+            <p>No pending cancellation requests.</p>
+        </div>
+    }
+    else
+    {
+        <table class="table table-striped mt-3">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>User</th>
+                    <th>Price</th>
+                    <th>Request Date</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var order in Model)
+                {
+                    <tr>
+                        <td>@order.Product.Name</td>
+                        <td>@order.UserEmail</td>
+                        <td>@order.Price.ToString("C")</td>
+                        <td>@order.OrderDate.ToString("yyyy-MM-dd HH:mm")</td>
+                        <td>
+                            <form method="post" asp-action="ApproveCancellation" class="d-inline">
+                                <input type="hidden" name="id" value="@order.Id" />
+                                <button type="submit" class="btn btn-success btn-sm">✅ Approve</button>
+                            </form>
+                            <form method="post" asp-action="RejectCancellation" class="d-inline">
+                                <input type="hidden" name="id" value="@order.Id" />
+                                <button type="submit" class="btn btn-danger btn-sm">❌ Reject</button>
+                            </form>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+</div>

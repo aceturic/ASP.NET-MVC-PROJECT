@@ -3,14 +3,14 @@
 @{
     ViewData["Title"] = "Purchase History";
 }
-
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 <div class="container mt-4">
-    <h2 class="text-center mb-4">🛍️ My Purchase History</h2>
+    <h2 class="text-center">🛍️ My Purchase History</h2>
 
     @if (!Model.Any())
     {
         <div class="alert alert-info text-center">
-            <p>You have no past orders. Start shopping now!</p>
+            <p>You have no past orders.</p>
         </div>
     }
     else
@@ -33,30 +33,43 @@
                                 <strong>Order Date:</strong> <span class="badge bg-secondary">@order.OrderDate.ToString("yyyy-MM-dd HH:mm")</span>
                             </p>
 
-                            <!-- Buttons - Updated Product Details Button -->
+                            <!-- Order Status -->
+                            <p>
+                                <strong>Status:</strong>
+                                @if (order.Status == OrderStatus.PendingCancellation)
+                                {
+                                    <span class="badge bg-warning">Pending Approval</span>
+                                }
+                                else if (order.Status == OrderStatus.Cancelled)
+                                {
+                                    <span class="badge bg-danger">Cancelled</span>
+                                }
+                                else if (order.Status == OrderStatus.Rejected)
+                                {
+                                    <span class="badge bg-info">Cancellation Rejected</span>
+                                }
+                                else
+                                {
+                                    <span class="badge bg-success">Processing</span>
+                                }
+                            </p>
+
+                            <!-- Buttons for Actions -->
                             <div class="d-flex gap-2 mt-3">
-                                <!-- Product Details (Updated) -->
-                                <a asp-controller="ProductDetails" asp-action="Index" asp-route-id="@order.ProductId" 
+                                <!-- Product Details -->
+                                <a asp-controller="ProductDetails" asp-action="Index" asp-route-id="@order.ProductId"
                                    class="btn btn-outline-secondary flex-grow-1 text-center">
                                     <i class="fas fa-info-circle"></i> Details
                                 </a>
 
-                                <!-- Re-Route Order -->
-                                <a asp-controller="Order" asp-action="ReRoute" asp-route-id="@order.Id" 
-                                   class="btn btn-warning flex-grow-1 text-center">
-                                    <i class="bi bi-truck"></i> Re-Route
-                                </a>
-                            </div>
-
-                            <!-- Cancel Order Button (New Row for Better Alignment) -->
-                            <div class="d-flex mt-2">
-                                <form asp-controller="Order" asp-action="CancelOrder" method="post" class="w-100">
-                                    <input type="hidden" name="orderId" value="@order.Id" />
-                                    <button type="submit" class="btn btn-danger w-100" 
-                                            onclick="return confirm('Are you sure you want to cancel this order?');">
-                                        <i class="bi bi-x-circle"></i> Cancel
-                                    </button>
-                                </form>
+                                <!-- Request Cancellation -->
+                                @if (order.Status == OrderStatus.Processing)
+                                {
+                                    <a asp-action="CancelRequest" asp-route-id="@order.Id"
+                                       class="btn btn-danger flex-grow-1 text-center">
+                                        <i class="bi bi-x-circle"></i> Request Cancellation
+                                    </a>
+                                }
                             </div>
 
                         </div>
@@ -67,7 +80,7 @@
     }
 </div>
 
-
+<!-- Updated Styling -->
 <style>
     .card {
         transition: transform 0.2s ease-in-out;
@@ -82,7 +95,6 @@
         padding: 8px;
     }
 
-
     .card .btn {
         text-align: center;
         font-size: 14px;
@@ -90,15 +102,11 @@
         min-width: 30%;
     }
 
-    .card .btn-sm {
-        font-size: 14px;
-        padding: 6px 10px;
-    }
+        .card .btn i {
+            margin-right: 5px;
+        }
 
-    .card .btn i {
-        margin-right: 5px;
-    }
-
+    /* Fix Media Query */
     media (max-width: 768px) {
         .card .btn
 
@@ -107,6 +115,4 @@
     }
 
     }
-
-
 </style>

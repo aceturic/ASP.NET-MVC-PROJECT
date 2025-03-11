@@ -1,8 +1,10 @@
 ﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Linq;
 using System.Threading.Tasks;
+using UsersApp.Data;
 using UsersApp.Models;
 using UsersApp.ViewModels;
 
@@ -12,27 +14,65 @@ namespace UsersApp.Controllers
     public class AdminController : Controller
     {
         private readonly UserManager<Users> _userManager;
+        private readonly AppDbContext _context;
 
-        public AdminController(UserManager<Users> userManager)
+        public AdminController(UserManager<Users> userManager, AppDbContext context)
         {
             _userManager = userManager;
+            _context = context;
         }
 
-        // GET: /Admin/RegisteredUsers
+        // ✅ View all pending cancellation requests
+        public async Task<IActionResult> CancelRequests()
+        {
+            var orders = await _context.Orders
+                .Include(o => o.Product)
+                .Where(o => o.Status == OrderStatus.PendingCancellation)
+                .ToListAsync();
+
+            return View(orders);
+        }
+
+        // ✅ Approve Cancellation Request
+        [HttpPost]
+        public async Task<IActionResult> ApproveCancellation(int id)
+        {
+            var order = await _context.Orders.FindAsync(id);
+            if (order != null)
+            {
+                order.Status = OrderStatus.Cancelled;
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction("CancelRequests");
+        }
+
+        // ✅ Reject Cancellation Request
+        [HttpPost]
+        public async Task<IActionResult> RejectCancellation(int id)
+        {
+            var order = await _context.Orders.FindAsync(id);
+            if (order != null)
+            {
+                order.Status = OrderStatus.Rejected;
+                await _context.SaveChangesAsync();
+            }
+            return RedirectToAction("CancelRequests");
+        }
+
+        // ✅ View Registered Users (Already Exists)
         public IActionResult RegisteredUsers()
         {
-            // Retrieve all users and project them into the view model
             var users = _userManager.Users.Select(u => new UserViewModel
             {
                 Id = u.Id,
                 Email = u.Email,
-                Name = u.FullName  // Or use u.Name if you have a custom property
+                Name = u.FullName
             }).ToList();
 
             return View(users);
         }
 
-        // GET: /Admin/EditUser?id={userId}
+        // ✅ Edit User (Already Exists)
         [HttpGet]
         public async Task<IActionResult> EditUser(string id)
         {
@@ -57,7 +97,6 @@ namespace UsersApp.Controllers
             return View(model);
         }
 
-        // POST: /Admin/EditUser
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> EditUser(EditUserViewModel model)
@@ -73,7 +112,6 @@ namespace UsersApp.Controllers
                 return NotFound();
             }
 
-            // Update the user's properties
             user.Email = model.Email;
             user.FullName = model.FullName;
 

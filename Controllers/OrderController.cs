@@ -112,16 +112,46 @@ namespace UsersApp.Controllers
 
             if (string.IsNullOrEmpty(userEmail))
             {
-                return Unauthorized(); // Ensure user is logged in
+                return Unauthorized();
             }
 
             var orders = await _context.Orders
-                .Include(o => o.Product) // Include product details
+                .Include(o => o.Product) 
                 .Where(o => o.UserEmail == userEmail)
                 .OrderByDescending(o => o.OrderDate)
                 .ToListAsync();
 
             return View(orders);
+        }
+
+        public async Task<IActionResult> CancelRequest(int id)
+        {
+            var order = await _context.Orders.Include(o => o.Product)
+                                             .FirstOrDefaultAsync(o => o.Id == id);
+
+            if (order == null || order.UserEmail != User.FindFirstValue(ClaimTypes.Email))
+            {
+                return NotFound();
+            }
+
+            return View(order);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SubmitCancelRequest(int id)
+        {
+            var order = await _context.Orders.FindAsync(id);
+            if (order == null || order.UserEmail != User.FindFirstValue(ClaimTypes.Email))
+            {
+                return NotFound();
+            }
+
+            // Mark order as "Pending Cancellation"
+            order.Status = OrderStatus.PendingCancellation;
+            await _context.SaveChangesAsync();
+
+            TempData["Success"] = "Your cancellation request has been sent for approval.";
+            return RedirectToAction("PurchaseHistory");
         }
 
         public IActionResult OrderSuccess()

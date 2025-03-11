@@ -1,0 +1,29 @@
+﻿@model UsersApp.Models.Order
+
+@{
+    ViewData["Title"] = "Confirm Cancellation";
+}
+
+<div class="container mt-4">
+    <h2 class="text-center text-danger">🚨 Confirm Cancellation Request</h2>
+
+    <div class="card shadow-sm border-0 mt-4">
+        <div class="card-body">
+            <h5 class="card-title text-primary">@Model.Product.Name</h5>
+            <p><strong>Price:</strong> @Model.Price.ToString("C")</p>
+            <p><strong>Delivery Address:</strong> @Model.DeliveryAddress, @Model.City, @Model.Country (@Model.ZipCode)</p>
+            <p><strong>Phone:</strong> @Model.PhoneNumber</p>
+            <p class="text-muted"><strong>Order Date:</strong> @Model.OrderDate.ToString("yyyy-MM-dd HH:mm")</p>
+
+            <div class="alert alert-warning">
+                <strong>Note:</strong> Your order will not be immediately canceled. An admin must approve it first.
+            </div>
+
+            <form asp-action="SubmitCancelRequest" method="post">
+                <input type="hidden" name="id" value="@Model.Id" />
+                <button type="submit" class="btn btn-danger">Confirm Cancellation Request</button>
+                <a asp-action="PurchaseHistory" class="btn btn-secondary">Back to Orders</a>
+            </form>
+        </div>
+    </div>
+</div>
