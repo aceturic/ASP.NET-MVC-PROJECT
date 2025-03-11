@@ -1,0 +1,71 @@
+﻿@{
+    ViewData["Title"] = "Admin Dashboard";
+}
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+<div class="container mt-4">
+    <h2 class="text-center mb-4">🛠️ Admin Dashboard</h2>
+
+    <div class="row">
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-body text-center">
+                    <i class="fas fa-box fa-3x text-primary mb-3"></i>
+                    <h5 class="card-title">Products</h5>
+                    <p class="card-text">Manage all products available in the store.</p>
+                    <a asp-controller="Products" asp-action="Index" class="btn btn-primary w-100">
+                        <i class="fas fa-box"></i> Manage Products
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-body text-center">
+                    <i class="fas fa-user-friends fa-3x text-info mb-3"></i>
+                    <h5 class="card-title">Registered Users</h5>
+                    <p class="card-text">View and manage all registered users.</p>
+                    <a asp-controller="Admin" asp-action="RegisteredUsers" class="btn btn-info w-100">
+                        <i class="fas fa-user-friends"></i> View Users
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-body text-center">
+                    <i class="fas fa-history fa-3x text-warning mb-3"></i>
+                    <h5 class="card-title">Purchase Control</h5>
+                    <p class="card-text">Monitor and manage purchase history.</p>
+                    <a asp-controller="PurchaseHistoryAdmin" asp-action="Index" class="btn btn-warning w-100">
+                        <i class="fas fa-history"></i> Purchase Control
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-6 col-lg-3 mb-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-body text-center">
+                    <i class="fas fa-ban fa-3x text-danger mb-3"></i>
+                    <h5 class="card-title">Cancel Requests</h5>
+                    <p class="card-text">Approve or reject order cancellation requests.</p>
+                    <a asp-controller="Admin" asp-action="CancelRequests" class="btn btn-danger w-100">
+                        <i class="fas fa-ban"></i> Manage Requests
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card {
+        transition: transform 0.2s ease-in-out;
+    }
+
+        .card:hover {
+            transform: scale(1.05);
+        }
+</style>

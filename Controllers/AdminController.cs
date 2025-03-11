@@ -22,7 +22,6 @@ namespace UsersApp.Controllers
             _context = context;
         }
 
-        // ✅ View all pending cancellation requests
         public async Task<IActionResult> CancelRequests()
         {
             var orders = await _context.Orders
@@ -33,7 +32,6 @@ namespace UsersApp.Controllers
             return View(orders);
         }
 
-        // ✅ Approve Cancellation Request
         [HttpPost]
         public async Task<IActionResult> ApproveCancellation(int id)
         {
@@ -46,7 +44,6 @@ namespace UsersApp.Controllers
             return RedirectToAction("CancelRequests");
         }
 
-        // ✅ Reject Cancellation Request
         [HttpPost]
         public async Task<IActionResult> RejectCancellation(int id)
         {
@@ -59,7 +56,6 @@ namespace UsersApp.Controllers
             return RedirectToAction("CancelRequests");
         }
 
-        // ✅ View Registered Users (Already Exists)
         public IActionResult RegisteredUsers()
         {
             var users = _userManager.Users.Select(u => new UserViewModel
@@ -72,7 +68,6 @@ namespace UsersApp.Controllers
             return View(users);
         }
 
-        // ✅ Edit User (Already Exists)
         [HttpGet]
         public async Task<IActionResult> EditUser(string id)
         {
@@ -127,6 +122,10 @@ namespace UsersApp.Controllers
             }
 
             return View(model);
+        }
+        public IActionResult AdminDashboard()
+        {
+            return View();
         }
     }
 }

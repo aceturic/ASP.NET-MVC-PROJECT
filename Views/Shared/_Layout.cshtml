@@ -40,23 +40,8 @@
                         @if (User .Identity.IsAuthenticated && User.IsInRole("Admin"))
                         {
                             <li class="nav-item">
-                                <a class="nav-link" asp-area="" asp-controller="Products" asp-action="Index">
-                                    <i class="fas fa-box"></i> Products
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Admin" asp-action="RegisteredUsers">
-                                    <i class="fas fa-user-friends"></i> Registered Users
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="PurchaseHistoryAdmin" asp-action="Index">
-                                    <i class="fas fa-history"></i> Purchase Control
-                                </a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Admin" asp-action="CancelRequests">
-                                    <i class="fas fa-ban"></i> Cancel Requests
+                                <a class="nav-link" asp-controller="Admin" asp-action="AdminDashboard">
+                                    <i class="fas fa-tachometer-alt"></i> Admin Dashboard
                                 </a>
                             </li>
                         }
