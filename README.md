@@ -1,6 +1,3 @@
-# Project Name
-
-![Project Logo](path/to/logo.png)
 
 ## Description
 
