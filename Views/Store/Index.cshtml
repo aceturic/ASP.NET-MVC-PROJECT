@@ -8,23 +8,21 @@
     string priceSort = ViewBag.PriceSort as string;
 }
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 
-<h2 class="text-center my-4 fw-bold text-primary">Store</h2>
+<h2 class="text-center my-5 fw-bold text-primary">Store</h2>
 
-<!-- Modernized Search & Filter Form -->
 <form method="get" id="filterForm" class="mb-4">
     <div class="row g-3 align-items-center">
-        <!-- Search Bar with Icon -->
         <div class="col-md-4 position-relative">
             <div class="input-group">
                 <span class="input-group-text bg-primary text-white"><i class="fas fa-search"></i></span>
-                <input type="text" name="searchString" id="searchInput" class="form-control shadow-sm"
+                <input type="text" name="searchString" id="searchInput" class="form-control rounded-pill shadow-sm"
                        placeholder="Search products..." value="@searchString" />
             </div>
         </div>
-        <!-- Category Dropdown -->
         <div class="col-md-3">
-            <select name="category" id="categorySelect" class="form-select shadow-sm">
+            <select name="category" id="categorySelect" class="form-select rounded-pill shadow-sm">
                 <option value="">All Categories</option>
                 @foreach (var cat in categories)
                 {
@@ -32,77 +30,72 @@
                 }
             </select>
         </div>
-        <!-- Price Sort Dropdown -->
         <div class="col-md-3">
-            <select name="priceSort" id="priceSortSelect" class="form-select shadow-sm">
+            <select name="priceSort" id="priceSortSelect" class="form-select rounded-pill shadow-sm">
                 <option value="">Sort by Price</option>
                 <option value="asc" selected="@(priceSort == "asc" ? "selected" : null)">Price: Low to High</option>
                 <option value="desc" selected="@(priceSort == "desc" ? "selected" : null)">Price: High to Low</option>
             </select>
         </div>
-        <!-- Search Button -->
         <div class="col-md-2">
-            <button type="submit" class="btn btn-primary w-100 shadow-sm">Search</button>
+            <button type="submit" class="btn btn-primary w-100 rounded-pill shadow-sm">Search</button>
         </div>
     </div>
 </form>
 
-<!-- Product Grid -->
 <div class="container">
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         @foreach (var product in Model)
         {
-            <!-- Determine the badge color based on quantity -->
             var quantityClass = product.Quantity <= 20 ? "bg-danger" :
             product.Quantity <= 42 ? "bg-warning" :
             "bg-success";
 
             <div class="col">
-                <div class="card h-100 shadow-sm border-0 rounded-3">
+                <div class="card h-100 shadow-sm border-0 rounded-3 transform-hover">
                     @if (!string.IsNullOrEmpty(product.ImageFileName))
                     {
-                        <img src="~/products/@product.ImageFileName" class="card-img-top" alt="@product.Name"
-                             style="object-fit: cover; height: 200px; border-radius: 8px 8px 0 0;" />
+                        <img src="~/products/@product.ImageFileName" class="card-img-top rounded-3" alt="@product.Name"
+                             style="object-fit: cover; height: 200px;" />
                     }
                     else
                     {
-                        <img src="~/images/placeholder.png" class="card-img-top" alt="No image available"
-                             style="object-fit: cover; height: 200px; border-radius: 8px 8px 0 0;" />
+                        <img src="~/images/placeholder.png" class="card-img-top rounded-3" alt="No image available"
+                             style="object-fit: cover; height: 200px;" />
                     }
                     <div class="card-body d-flex flex-column">
-                        <h5 class="card-title fw-bold">@product.Name</h5>
+                        <h5 class="card-title fw-bold text-primary">@product.Name</h5>
                         <p class="card-text"><strong>Brand:</strong> @product.Brand</p>
                         <p class="card-text"><strong>Category:</strong> @product.Category</p>
                         <p class="card-text"><strong>Price:</strong> <span class="text-success fw-bold">$@product.Price</span></p>
 
-                        <!-- Quantity Display with Dynamic Color -->
                         <p class="card-text">
                             <strong>Quantity:</strong>
                             <span class="badge @quantityClass">@product.Quantity</span>
                         </p>
 
-                        <button class="btn favorite-btn btn-outline-danger" id="favorite-btn-@product.Id" data-product-id="@product.Id">
+                        <button class="btn favorite-btn btn-outline-danger rounded-pill" id="favorite-btn-@product.Id" data-product-id="@product.Id">
                             <i class="fas fa-heart"></i> Add to Favorites
                         </button>
 
                         <div class="mt-auto">
                             <a asp-controller="ProductDetails" asp-action="Index" asp-route-id="@product.Id"
-                               class="btn btn-outline-secondary me-2"><i class="fas fa-info-circle"></i> Details</a>
+                               class="btn btn-outline-secondary me-2 rounded-pill"><i class="fas fa-info-circle"></i> Details</a>
                             @if (product.Quantity > 0)
                             {
                                 <a asp-controller="Order" asp-action="Checkout" asp-route-productId="@product.Id"
-                                   class="btn btn-primary">
+                                   class="btn btn-primary rounded-pill">
                                     <i class="fas fa-shopping-cart"></i> Buy Now
                                 </a>
                             }
                             else
                             {
-                                <button class="btn btn-secondary" disabled>Out of Stock</button>
+                                <button class="btn btn-secondary rounded-pill" disabled>Out of Stock</button>
                             }
-                        </div>
                         </div>
                     </div>
                 </div>
+            </div>
         }
     </div>
 </div>
@@ -127,8 +120,6 @@
             var form = document.getElementById('filterForm');
             var categorySelect = document.getElementById('categorySelect');
             var priceSortSelect = document.getElementById('priceSortSelect');
-
-            // Auto-submit when dropdowns change.
             categorySelect.addEventListener('change', function () {
                 form.submit();
             });
@@ -139,9 +130,7 @@
     </script>
 }
 
-<!-- Modern Styles -->
 <style>
-    /* Dark Mode & Light Mode */
     :root {
         --bg-light: #f8f9fa;
         --bg-dark: #121212;
@@ -160,63 +149,55 @@
         align-items: center;
         justify-content: center;
         padding: 10px 15px;
-        border-radius: 50px; /* Rounded corners */
+        border-radius: 50px; 
         transition: background-color 0.3s, color 0.3s, transform 0.3s;
         font-weight: 500;
     }
 
-        .favorite-btn i {
-            margin-right: 5px; /* Space between icon and text */
-        }
+    .favorite-btn i {
+        margin-right: 5px;
+    }
 
-        .favorite-btn:hover {
-            background-color: #ff6b6b; /* Light red background on hover */
-            color: white; /* White text on hover */
-            transform: scale(1.05); /* Slightly enlarge on hover */
-        }
-
-        .favorite-btn:focus {
-            outline: none; /* Remove outline on focus */
-        }
+    .favorite-btn:hover {
+        background-color: #ff6b6b; 
+        color: white; 
+        transform: scale(1.05); 
+    }
 
     body {
         background-color: var(--bg-light);
         color: var(--text-light);
         transition: all 0.3s ease-in-out;
+        font-family: 'Roboto', sans-serif;
     }
 
     media (prefers-color-scheme: dark) {
-        body
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-dark);
+        }
 
-    {
-        background-color: var(--bg-dark);
-        color: var(--text-dark);
-    }
+        .card {
+            background: var(--card-dark);
+            border: 1px solid var(--border-dark);
+        }
 
-    .card {
-        background: var(--card-dark);
-        border: 1px solid var(--border-dark);
-        box-shadow: 0px 4px 10px rgba(0, 200, 255, 0.2);
-    }
+        .btn-primary {
+            background: var(--primary-dark);
+            border-color: var(--primary-dark);
+        }
 
-    .btn-primary {
-        background: var(--primary-dark);
-        border-color: var(--primary-dark);
-    }
-
-    .btn-outline-secondary {
-        color: var(--primary-dark);
-        border-color: var(--primary-dark);
-    }
+        .btn-outline-secondary {
+            color: var(--primary-dark);
+            border-color: var(--primary-dark);
+        }
 
         .btn-outline-secondary:hover {
             background: var(--primary-dark);
             color: white;
         }
-
     }
 
-    /* Search & Filter Styling */
     .input-group-text {
         border-radius: 50px 0 0 50px;
     }
@@ -226,32 +207,31 @@
         transition: 0.2s;
     }
 
-        .form-control:focus {
-            box-shadow: 0 0 10px var(--primary-light);
-            border-color: var(--primary-light);
-        }
+    .form-control:focus {
+        box-shadow: 0 0 10px var(--primary-light);
+        border-color: var(--primary-light);
+    }
 
     .btn-primary {
         border-radius: 50px;
         transition: 0.2s;
     }
 
-        .btn-primary:hover {
-            box-shadow: 0 0 10px var(--primary-light);
-        }
+    .btn-primary:hover {
+        box-shadow: 0 0 10px var(--primary-light);
+    }
 
-    /* Product Card */
+
     .card {
         border-radius: 15px;
         transition: 0.3s;
     }
 
-        .card:hover {
-            transform: scale(1.02);
-            box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.15);
-        }
+    .card:hover {
+        transform: scale(1.02);
+        box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.15);
+    }
 
-    /* Quantity Badge Colors */
     .badge {
         font-size: 14px;
         padding: 5px 10px;
@@ -271,12 +251,12 @@
     }
 </style>
 
+
 <script>  
 document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll(".favorite-btn").forEach(button => {
             let productId = button.getAttribute("data-product-id");
 
-            // Check if the product is already in favorites
             fetch(`/Favorites/IsFavorite/${productId}`)
                 .then(response => response.json())
                 .then(data => {
@@ -290,7 +270,7 @@ document.addEventListener('DOMContentLoaded', function () {
                     }
                 });
 
-            // Handle click event to add to favorites
+
             button.addEventListener("click", function () {
                 fetch(`/Favorites/AddToFavorites`, {
                     method: "POST",
@@ -306,7 +286,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         button.classList.add("btn-success");
                         button.classList.remove("btn-outline-danger");
 
-                        // Show toast notification
                         let toast = new bootstrap.Toast(document.getElementById('toast-notification'));
                         toast.show();
                     } else {
@@ -339,7 +318,6 @@ document.addEventListener('DOMContentLoaded', function () {
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            // Show toast notification
                             let toast = new bootstrap.Toast(document.getElementById('cart-toast-notification'));
                             toast.show();
                         } else {

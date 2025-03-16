@@ -196,6 +196,14 @@ footer {
         color: #ffd700 !important;
         transform: scale(1.05);
     }
+
+
+.navbar .navbar-brand {
+    font-size: 1.5rem;
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--text-color);
+}
 body.dark-mode {
     background-color: #121212;
     color: #f8f9fa;

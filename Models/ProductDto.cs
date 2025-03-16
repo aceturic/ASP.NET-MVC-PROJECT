@@ -13,6 +13,7 @@ namespace UsersApp.Models
         public string Category { get; set; } = "";
         [Required]
         public decimal Price { get; set; }
+
         [Required]
         public string Description { get; set; } = "";
         [Required]

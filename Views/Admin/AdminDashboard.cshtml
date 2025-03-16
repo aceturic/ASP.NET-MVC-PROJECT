@@ -2,8 +2,30 @@
     ViewData["Title"] = "Admin Dashboard";
 }
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
 <div class="container mt-4">
     <h2 class="text-center mb-4">🛠️ Admin Dashboard</h2>
+
+    <div class="row mb-4">
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-body text-center">
+                    <i class="fas fa-users fa-3x text-primary mb-3"></i>
+                    <h5 class="card-title">Total Users</h5>
+                    <p class="card-text">@ViewBag.TotalUsers</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm border-0">
+                <div class="card-body text-center">
+                    <i class="fas fa-shopping-cart fa-3x text-success mb-3"></i>
+                    <h5 class="card-title">Total Purchases</h5>
+                    <p class="card-text">@ViewBag.TotalPurchases</p>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <div class="row">
         <div class="col-md-6 col-lg-3 mb-4">
@@ -65,7 +87,7 @@
         transition: transform 0.2s ease-in-out;
     }
 
-        .card:hover {
-            transform: scale(1.05);
-        }
+    .card:hover {
+        transform: scale(1.05);
+    }
 </style>

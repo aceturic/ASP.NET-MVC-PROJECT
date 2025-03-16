@@ -16,6 +16,8 @@ namespace UsersApp.Data
         public DbSet<Product> Products { get; set; }
         public DbSet<Review> Reviews { get; set; }
         public DbSet<FavoriteProduct> FavoriteProducts { get; set; }
+        public DbSet<Ticket> Tickets { get; set; }
+        public DbSet<Message> Messages { get; set; }
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
@@ -33,7 +35,6 @@ namespace UsersApp.Data
                 .HasForeignKey(o => o.ProductId)
                 .OnDelete(DeleteBehavior.Restrict);
 
-            // ✅ Seed Admin Role
             var adminRole = new IdentityRole
             {
                 Id = "1",

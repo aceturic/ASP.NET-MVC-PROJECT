@@ -1,33 +1,243 @@
 ﻿@model ProductDto
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    <style>
 
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-<div class="container d-flex justify-content-center align-items-center" style="min-height: 100vh;">
-    <div class="col-md-6">
-        <!-- Reduced width from 8 to 6 -->
-        <div class="card border-0 shadow-lg p-4 rounded-4 custom-card">
-            <h2 class="text-center mb-3 fw-bold text-primary custom-heading">Edit Product</h2>
+        :root {
+            --primary-color: #007bff;
+            --primary-dark: #0056b3;
+            --background: #f0f2f5;
+            --card-background: #fff;
+            --text-color: #333;
+            --nav-background: #f8f9fa;
+        }
+        media (prefers-color-scheme: dark) {
+            : root
 
+        {
+            --primary-color: #00c8ff;
+            --primary-dark: #00a0d1;
+            --background: #121212;
+            --card-background: #1e1e1e;
+            --text-color: #e0e0e0;
+            --nav-background: var(--primary-dark);
+        }
+
+        }
+
+
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: var(--background);
+            color: var(--text-color);
+        }
+
+        .navbar {
+            width: 100%;
+            background: var(--nav-background);
+            padding: 1rem 2rem;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 1000;
+        }
+
+            .navbar .navbar-brand {
+                font-size: 1.5rem;
+                font-weight: 600;
+                text-decoration: none;
+                color: var(--text-color);
+            }
+        media (prefers-color-scheme: dark) {
+            .navbar .navbar-brand
+
+        {
+            color: #fff;
+        }
+
+        }
+
+
+        .form-container {
+            margin-top: 100px; 
+            display: flex;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .modern-card {
+            background: var(--card-background);
+            border-radius: 1rem;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            width: 100%;
+            max-width: 600px;
+            animation: slideUp 0.5s ease;
+        }
+        keyframes slideUp {
+            from
+
+        {
+            transform: translateY(20px);
+            opacity: 0;
+        }
+
+        to {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        }
+
+        .modern-heading {
+            color: var(--primary-color);
+            background: #e9f0fb;
+            padding: 10px 20px;
+            border-radius: 0.5rem;
+            display: inline-block;
+            margin-bottom: 1.5rem;
+        }
+        media (prefers-color-scheme: dark) {
+            .modern-heading
+
+        {
+            color: #fff;
+            background: var(--primary-dark);
+        }
+
+        }
+
+        .modern-input {
+            border: none;
+            border-bottom: 2px solid #ccc;
+            background-color: transparent;
+            transition: border-color 0.3s ease;
+            padding: 0.5rem;
+            font-size: 1rem;
+            width: 100%;
+        }
+
+            .modern-input:focus {
+                outline: none;
+                border-color: var(--primary-color);
+            }
+
+        .modern-label {
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        .modern-textarea {
+            resize: vertical;
+            min-height: 80px;
+            padding: 0.5rem;
+            font-size: 1rem;
+            width: 100%;
+        }
+
+        .modern-img {
+            max-width: 120px;
+            border: 2px solid var(--primary-color);
+            border-radius: 8px;
+            transition: transform 0.3s ease;
+        }
+
+            .modern-img:hover {
+                transform: scale(1.05);
+            }
+
+        .modern-btn, .modern-btn-outline {
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 0.5rem 1.5rem;
+            border-radius: 50px;
+            cursor: pointer;
+        }
+
+        .modern-btn {
+            background: var(--primary-color);
+            border: none;
+            color: #fff;
+        }
+
+            .modern-btn:hover {
+                background: var(--primary-dark);
+                box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+            }
+
+        .modern-btn-outline {
+            background: transparent;
+            border: 2px solid var(--primary-color);
+            color: var(--primary-color);
+        }
+
+            .modern-btn-outline:hover {
+                background: var(--primary-color);
+                color: #fff;
+                box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
+            }
+
+        .mb-3 {
+            margin-bottom: 1rem;
+        }
+
+        .mt-4 {
+            margin-top: 1.5rem;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .fw-bold {
+            font-weight: 600;
+        }
+
+        .fw-semibold {
+            font-weight: 500;
+        }
+
+        .text-muted {
+            color: #6c757d;
+        }
+    </style>
+</head>
+<body>
+    <div class="form-container">
+        <div class="card border-0 shadow p-4 rounded-4 modern-card">
+            <h2 class="text-center fw-bold modern-heading">Edit Product</h2>
             <form method="post" enctype="multipart/form-data">
-                <div class="mb-2">
+                <div class="mb-3">
                     <label class="form-label fw-semibold">Product ID</label>
                     <input class="form-control-plaintext text-muted small-text" readonly value="@ViewData["ProductId"]">
                 </div>
-
-                <div class="mb-2 form-floating">
-                    <input type="text" class="form-control custom-input" asp-for="Name" placeholder="Product Name">
-                    <label class="custom-label">Product Name</label>
+                <div class="mb-3 form-floating">
+                    <input type="text" class="form-control modern-input" asp-for="Name" placeholder="Product Name">
+                    <label class="modern-label">Product Name</label>
                     <span asp-validation-for="Name" class="text-danger"></span>
                 </div>
-
-                <div class="mb-2 form-floating">
-                    <input type="text" class="form-control custom-input" asp-for="Brand" placeholder="Brand">
-                    <label class="custom-label">Brand</label>
+                <div class="mb-3 form-floating">
+                    <input type="text" class="form-control modern-input" asp-for="Brand" placeholder="Brand">
+                    <label class="modern-label">Brand</label>
                     <span asp-validation-for="Brand" class="text-danger"></span>
                 </div>
-
-                <div class="mb-2">
+                <div class="mb-3">
                     <label class="form-label fw-semibold">Category</label>
-                    <select class="form-select custom-input" asp-for="Category">
+                    <select class="form-select modern-input" asp-for="Category">
                         <option value="CPU">CPU</option>
                         <option value="MB">MB</option>
                         <option value="RAM">RAM</option>
@@ -37,167 +247,50 @@
                         <option value="CASE">CASE</option>
                     </select>
                 </div>
-
-                <div class="mb-2 form-floating">
-                    <input type="number" class="form-control custom-input" asp-for="Price" placeholder="Price">
-                    <label class="custom-label">Price ($)</label>
+                <div class="mb-3 form-floating">
+                    <input type="number" class="form-control modern-input" asp-for="Price" placeholder="Price">
+                    <label class="modern-label">Price ($)</label>
                     <span asp-validation-for="Price" class="text-danger"></span>
                 </div>
-
-                <div class="mb-2 form-floating">
-                    <textarea class="form-control custom-input small-textarea" asp-for="Description" placeholder="Description"></textarea>
-                    <label class="custom-label">Description</label>
+                <div class="mb-3 form-floating">
+                    <textarea class="form-control modern-input modern-textarea" asp-for="Description" placeholder="Description"></textarea>
+                    <label class="modern-label">Description</label>
                     <span asp-validation-for="Description" class="text-danger"></span>
                 </div>
-
-                <div class="mb-2 form-floating">
-                    <textarea class="form-control custom-input small-textarea" asp-for="Quantity" placeholder="Quantity"></textarea>
-                    <label class="custom-label">Quantity</label>
+                <div class="mb-3 form-floating">
+                    <textarea class="form-control modern-input modern-textarea" asp-for="Quantity" placeholder="Quantity"></textarea>
+                    <label class="modern-label">Quantity</label>
                     <span asp-validation-for="Quantity" class="text-danger"></span>
                 </div>
-
-                <!-- Image Preview (Smaller) -->
-                <div class="mb-2 text-center">
+                <div class="mb-3 text-center">
                     <label class="form-label fw-semibold">Current Image</label>
                     <br>
-                    <img id="imagePreview" src="/products/@ViewData["ImageFileName"]"
-                         class="rounded shadow-lg img-fluid custom-img">
+                    <img id="imagePreview" src="/products/@ViewData["ImageFileName"]" class="rounded shadow img-fluid modern-img">
                 </div>
-
-                <!-- File Upload with Preview -->
-                <div class="mb-2">
+                <div class="mb-3">
                     <label class="form-label fw-semibold">Upload New Image</label>
-                    <input type="file" class="form-control custom-input" asp-for="ImageFile" id="imageUpload">
+                    <input type="file" class="form-control modern-input" asp-for="ImageFile" id="imageUpload">
                     <span asp-validation-for="ImageFile" class="text-danger"></span>
                 </div>
-
-                <div class="mb-2">
+                <div class="mb-3">
                     <label class="form-label fw-semibold">Created At</label>
                     <input class="form-control-plaintext text-muted small-text" readonly value="@ViewData["CreatedAt"]">
                 </div>
-
-                <!-- Buttons -->
-                <div class="d-flex justify-content-center gap-3 mt-3">
-                    <button type="submit" class="btn custom-btn px-4 py-2 rounded-pill shadow-sm">Save</button>
-                    <a asp-controller="Products" asp-action="Index" class="btn custom-btn-outline px-4 py-2 rounded-pill shadow-sm">Cancel</a>
+                <div class="text-center mt-4">
+                    <button type="submit" class="modern-btn px-4 py-2 rounded-pill">Save</button>
+                    <a asp-controller="Products" asp-action="Index" class="modern-btn-outline px-4 py-2 rounded-pill">Cancel</a>
                 </div>
             </form>
         </div>
     </div>
-</div>
-
-<!-- Live Image Preview Script -->
-<script>
-    document.getElementById("imageUpload").addEventListener("change", function(event) {
-        const reader = new FileReader();
-        reader.onload = function() {
-            const preview = document.getElementById("imagePreview");
-            preview.src = reader.result;
-            preview.style.opacity = "0";
-            setTimeout(() => preview.style.opacity = "1", 200);
-        };
-        reader.readAsDataURL(event.target.files[0]);
-    });
-</script>
-
-<!-- Stylish Compact UI Enhancements -->
-<style>
-    :root {
-        --bg-light: #f8f9fa;
-        --bg-dark: #121212;
-        --card-light: rgba(255, 255, 255, 0.95);
-        --card-dark: rgba(30, 30, 30, 0.95);
-        --text-light: #333;
-        --text-dark: #f8f9fa;
-        --primary-light: #007bff;
-        --primary-dark: #00c8ff;
-        --label-light: #666;
-        --label-dark: #bbb;
-    }
-
-    body {
-        background-color: var(--bg-light);
-        color: var(--text-light);
-        transition: all 0.3s ease-in-out;
-    }
-
-    /* Dark Mode */
-    media (prefers-color-scheme: dark) {
-        body
-
-    {
-        background-color: var(--bg-dark);
-        color: var(--text-dark);
-    }
-
-    .custom-card {
-        background: var(--card-dark);
-        box-shadow: 0px 4px 15px rgba(0, 200, 255, 0.2);
-    }
-
-    .custom-btn {
-        background: var(--primary-dark);
-        color: white;
-        border: none;
-    }
-
-    .custom-btn-outline {
-        border: 2px solid var(--primary-dark);
-        color: var(--primary-dark);
-    }
-
-        .custom-btn:hover, .custom-btn-outline:hover {
-            box-shadow: 0 0 10px var(--primary-dark);
-        }
-
-    .custom-label {
-        color: var(--label-dark);
-    }
-
-    }
-
-    /* Light Mode */
-    .custom-card {
-        background: var(--card-light);
-        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.1);
-    }
-
-    .custom-btn {
-        background: var(--primary-light);
-        color: white;
-    }
-
-    .custom-btn-outline {
-        border: 2px solid var(--primary-light);
-        color: var(--primary-light);
-    }
-
-        .custom-btn:hover, .custom-btn-outline:hover {
-            box-shadow: 0 0 10px var(--primary-light);
-        }
-
-    .custom-img {
-        max-width: 100px;
-        border-radius: 8px;
-        border: 2px solid var(--primary-light);
-        transition: 0.3s ease-in-out;
-    }
-
-    .custom-label {
-        color: var(--label-light);
-    }
-
-    .custom-input:focus {
-        border-color: var(--primary-light);
-        box-shadow: 0 0 8px var(--primary-light);
-    }
-
-    /* Reduced Spacing for Compact Design */
-    .small-text {
-        font-size: 0.9rem;
-    }
-
-    .small-textarea {
-        height: 80px !important;
-    }
-</style>
+    <script>
+        document.getElementById("imageUpload").addEventListener("change", function(event) {
+            const reader = new FileReader();
+            reader.onload = function() {
+                document.getElementById("imagePreview").src = reader.result;
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        });
+    </script>
+</body>
+</html>

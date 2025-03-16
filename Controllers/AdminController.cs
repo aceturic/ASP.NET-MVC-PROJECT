@@ -123,6 +123,16 @@ namespace UsersApp.Controllers
 
             return View(model);
         }
+        public async Task<IActionResult> Dashboard()
+        {
+            ViewBag.TotalUsers = await _context.Users.CountAsync();
+            ViewBag.TotalPurchases = await _context.Orders.CountAsync();
+            Console.WriteLine("Total Users: " + ViewBag.TotalUsers);
+            Console.WriteLine("Total Purchases: " + ViewBag.TotalPurchases);
+            return View();
+        }
+
+
         public IActionResult AdminDashboard()
         {
             return View();

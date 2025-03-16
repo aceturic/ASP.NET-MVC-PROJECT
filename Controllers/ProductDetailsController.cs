@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Linq;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using UsersApp.Data;
 using UsersApp.Models;
@@ -36,11 +37,10 @@ namespace UsersApp.Controllers
                 })
                 .ToList();
 
-            // Fetch related products from the same category, excluding the current product
             var relatedProducts = _context.Products
                 .Where(p => p.Category == product.Category && p.Id != product.Id)
-                .OrderBy(p => Guid.NewGuid()) // Randomize products
-                .Take(4) // Limit to 4 related products
+                .OrderBy(p => Guid.NewGuid()) 
+                .Take(4) 
                 .ToList();
 
             var viewModel = new ProductDetailsViewModel
@@ -64,7 +64,6 @@ namespace UsersApp.Controllers
                 return RedirectToAction("Index", new { id = review.ProductId });
             }
 
-            // If validation fails, reload the product details page with existing data
             var product = _context.Products.FirstOrDefault(p => p.Id == review.ProductId);
             if (product == null)
             {
@@ -89,6 +88,21 @@ namespace UsersApp.Controllers
             };
 
             return View("Index", viewModel);
+        }
+        [Authorize(Roles = "Admin")]
+        [HttpDelete]
+        public IActionResult DeleteReview(int id)
+        {
+            var review = _context.Reviews.FirstOrDefault(r => r.Id == id);
+            if (review == null)
+            {
+                return Json(new { success = false, message = "Review not found." });
+            }
+
+            _context.Reviews.Remove(review);
+            _context.SaveChanges();
+
+            return Json(new { success = true });
         }
     }
 }

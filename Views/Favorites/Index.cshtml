@@ -1,26 +1,27 @@
 ﻿@model List<Product>
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
 <h2 class="text-center my-4 fw-bold text-primary">My Favorite Products</h2>
 
 @if (!Model.Any())
 {
-    <p>No favorite products yet.</p>
+    <p class="text-center">No favorite products yet.</p>
 }
 else
 {
     <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-4">
         @foreach (var product in Model)
         {
-            <div class="col" id="favorite-card-@product.Id">
-                <div class="card h-100 shadow-sm border-0 rounded-3">
-                    <img src="~/products/@product.ImageFileName" class="card-img-top" alt="@product.Name" style="object-fit: cover; height: 200px;">
+            <div class="col">
+                <div class="card h-100 shadow-sm border-0 rounded-3 position-relative overflow-hidden" style="transition: transform 0.3s, box-shadow 0.3s;">
+                    <img src="~/products/@product.ImageFileName" class="card-img-top" alt="@product.Name" style="object-fit: cover; height: 250px;">
                     <div class="card-body">
-                        <h5 class="card-title">@product.Name</h5>
-                        <p class="card-text"><strong>Price:</strong> $@product.Price</p>
-                        <button class="btn btn-danger remove-btn" data-product-id="@product.Id">
-                            <i class="fas fa-trash-alt"></i> Remove
-                        </button>
+                        <h5 class="card-title fw-bold text-dark">@product.Name</h5>
+                        <p class="card-text text-muted"><strong>Price:</strong> $@product.Price</p>
                     </div>
+                    <button class="btn btn-danger remove-btn position-absolute top-0 end-0 m-3" data-product-id="@product.Id" style="border-radius: 50%; width: 40px; height: 40px; padding: 0; transition: background-color 0.2s;">
+                        <i class="fas fa-trash-alt" style="font-size: 18px;"></i>
+                    </button>
                 </div>
             </div>
         }
@@ -36,32 +37,85 @@ else
 
 @section Scripts {
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
+                     document.addEventListener('DOMContentLoaded', function () {
             document.querySelectorAll(".remove-btn").forEach(button => {
                 button.addEventListener("click", function () {
                     let productId = this.getAttribute("data-product-id");
 
                     if (!confirm("Are you sure you want to remove this product from favorites?")) return;
 
-                    fetch(`/Favorites/Remove`, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
+                    fetch('/Favorites/Remove', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'RequestVerificationToken': $('input[name="__RequestVerificationToken"]').val()
+                        },
                         body: JSON.stringify({ productId: parseInt(productId) })
                     })
                     .then(response => response.json())
                     .then(data => {
                         if (data.success) {
-                            document.getElementById(`favorite-card-${productId}`).remove();
-
+        
                             let toast = new bootstrap.Toast(document.getElementById('toast-notification'));
                             toast.show();
+
+                  
+                            setTimeout(() => {
+                                location.reload();
+                            }, 1000);
                         } else {
                             alert(data.message);
                         }
                     })
-                    .catch(error => console.error("Error:", error));
+                    .catch(error => console.error('Error:', error));
                 });
             });
         });
     </script>
 }
+
+<style>
+    .card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border-radius: 20px;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    }
+
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+    .remove-btn {
+        background-color: #ff4d4d;
+        border: none;
+        display: none;
+        transition: background-color 0.3s ease;
+    }
+
+    .card:hover .remove-btn {
+        display: block;
+        background-color: #ff1a1a;
+    }
+
+    .card-body {
+        padding: 20px;
+    }
+
+    .card-title {
+        font-size: 1.2rem;
+    }
+
+    .card-text {
+        font-size: 1rem;
+    }
+
+    .toast-body {
+        font-size: 1rem;
+        padding: 10px 20px;
+    }
+
+    .toast {
+        border-radius: 10px;
+    }
+</style>

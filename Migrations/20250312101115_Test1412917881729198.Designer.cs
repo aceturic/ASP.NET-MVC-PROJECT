@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using UsersApp.Data;
 
@@ -11,9 +12,11 @@ using UsersApp.Data;
 namespace UsersApp.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250312101115_Test1412917881729198")]
+    partial class Test1412917881729198
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -185,35 +188,6 @@ namespace UsersApp.Migrations
                     b.ToTable("FavoriteProducts");
                 });
 
-            modelBuilder.Entity("UsersApp.Models.Message", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<string>("Content")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<string>("SenderId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
-
-                    b.Property<DateTime>("SentAt")
-                        .HasColumnType("datetime2");
-
-                    b.Property<int>("TicketId")
-                        .HasColumnType("int");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("TicketId");
-
-                    b.ToTable("Messages");
-                });
-
             modelBuilder.Entity("UsersApp.Models.Order", b =>
                 {
                     b.Property<int>("Id")
@@ -361,9 +335,6 @@ namespace UsersApp.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("AdminId")
-                        .HasColumnType("nvarchar(max)");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -378,10 +349,6 @@ namespace UsersApp.Migrations
                         .IsRequired()
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
-
-                    b.Property<string>("UserId")
-                        .IsRequired()
-                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
@@ -519,17 +486,6 @@ namespace UsersApp.Migrations
                     b.Navigation("Product");
                 });
 
-            modelBuilder.Entity("UsersApp.Models.Message", b =>
-                {
-                    b.HasOne("UsersApp.Models.Ticket", "Ticket")
-                        .WithMany("Messages")
-                        .HasForeignKey("TicketId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Ticket");
-                });
-
             modelBuilder.Entity("UsersApp.Models.Order", b =>
                 {
                     b.HasOne("UsersApp.Models.Product", "Product")
@@ -553,11 +509,6 @@ namespace UsersApp.Migrations
             modelBuilder.Entity("UsersApp.Models.Product", b =>
                 {
                     b.Navigation("Reviews");
-                });
-
-            modelBuilder.Entity("UsersApp.Models.Ticket", b =>
-                {
-                    b.Navigation("Messages");
                 });
 #pragma warning restore 612, 618
         }

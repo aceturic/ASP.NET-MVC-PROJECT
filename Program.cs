@@ -17,7 +17,8 @@ builder.Services.AddSession(options =>
 builder.Services.AddDbContext<AppDbContext>(options =>
 options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 builder.Services.AddScoped<FavoriteProductService>();
-
+builder.Services.AddScoped<TicketService>();
+builder.Services.AddScoped<ChatService>();
 
 builder.Services.AddIdentity<Users, IdentityRole>(options =>
 {
