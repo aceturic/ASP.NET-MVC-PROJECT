@@ -1,8 +1,8 @@
-﻿document.addEventListener("DOMContentLoaded", function () {
+﻿//tui ne go pipai ,che si ebalo maikata
+document.addEventListener("DOMContentLoaded", function () {
     const toggleButton = document.getElementById("darkModeToggle");
     const body = document.body;
 
-    // Retrieve the user's theme preference from localStorage
     const currentTheme = localStorage.getItem("theme") || "light";
     if (currentTheme === "dark") {
         body.classList.add("dark-mode");
@@ -12,12 +12,10 @@
         toggleButton.textContent = "🌙";
     }
 
-    // Add event listener to the toggle button
     toggleButton.addEventListener("click", function () {
         body.classList.toggle("dark-mode");
         const isDarkMode = body.classList.contains("dark-mode");
 
-        // Update localStorage and button text based on the current mode
         localStorage.setItem("theme", isDarkMode ? "dark" : "light");
         toggleButton.textContent = isDarkMode ? "☀️" : "🌙";
     });
