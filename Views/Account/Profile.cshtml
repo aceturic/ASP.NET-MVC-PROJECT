@@ -1,0 +1,39 @@
+﻿@model UsersApp.ViewModels.UserProfileViewModel
+
+@using (Html.BeginForm())
+{
+    @Html.AntiForgeryToken()
+    @Html.ValidationSummary(true)
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Name)
+        @Html.EditorFor(model => model.Name)
+        @Html.ValidationMessageFor(model => model.Name)
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.Email)
+        @Html.EditorFor(model => model.Email)
+        @Html.ValidationMessageFor(model => model.Email)
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.CurrentPassword)
+        @Html.PasswordFor(model => model.CurrentPassword)
+        @Html.ValidationMessageFor(model => model.CurrentPassword)
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.NewPassword)
+        @Html.PasswordFor(model => model.NewPassword)
+        @Html.ValidationMessageFor(model => model.NewPassword)
+    </div>
+
+    <div class="form-group">
+        @Html.LabelFor(model => model.ConfirmPassword)
+        @Html.PasswordFor(model => model.ConfirmPassword)
+        @Html.ValidationMessageFor(model => model.ConfirmPassword)
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+}

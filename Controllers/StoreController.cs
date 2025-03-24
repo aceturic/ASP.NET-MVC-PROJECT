@@ -2,6 +2,9 @@
 using UsersApp.Data;
 using UsersApp.Models;
 using System.Linq;
+using X.PagedList;
+using X.PagedList.Mvc.Core;
+using X.PagedList.Extensions;
 
 namespace UsersApp.Controllers
 {
@@ -14,8 +17,9 @@ namespace UsersApp.Controllers
             _context = context;
         }
 
-        public IActionResult Index(string searchString, string category, string priceSort)
+        public IActionResult Index(string searchString, string category, string priceSort, int page = 1)
         {
+            int pageSize = 6;
             var products = _context.Products.AsQueryable();
 
             if (!string.IsNullOrEmpty(searchString))
@@ -42,12 +46,14 @@ namespace UsersApp.Controllers
             }
 
             ViewBag.Categories = _context.Products.Select(p => p.Category).Distinct().ToList();
+            var paginatedProducts = products.ToPagedList(page, pageSize);
 
             ViewBag.SearchString = searchString;
             ViewBag.SelectedCategory = category;
             ViewBag.PriceSort = priceSort;
 
-            return View(products.ToList());
+            return View(paginatedProducts);
+
         }
     }
 }

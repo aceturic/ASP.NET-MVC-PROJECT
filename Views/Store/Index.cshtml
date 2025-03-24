@@ -1,4 +1,5 @@
-﻿@model IEnumerable<Product>
+﻿@model X.PagedList.IPagedList<UsersApp.Models.Product>
+@using X.PagedList.Mvc.Core
 @{
     ViewData["Title"] = "Store";
     Layout = "~/Views/Shared/_Layout.cshtml";
@@ -7,22 +8,24 @@
     string searchString = ViewBag.SearchString as string;
     string priceSort = ViewBag.PriceSort as string;
 }
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-<link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
 
-<h2 class="text-center my-5 fw-bold text-primary">Store</h2>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.css" rel="stylesheet">
+
+<h2 class="text-center my-5 fw-bold text-gradient">🛒 Store</h2>
 
 <form method="get" id="filterForm" class="mb-4">
-    <div class="row g-3 align-items-center">
-        <div class="col-md-4 position-relative">
+    <div class="row g-3 align-items-center justify-content-center">
+        <div class="col-md-4">
             <div class="input-group">
-                <span class="input-group-text bg-primary text-white"><i class="fas fa-search"></i></span>
-                <input type="text" name="searchString" id="searchInput" class="form-control rounded-pill shadow-sm"
-                       placeholder="Search products..." value="@searchString" />
+                <span class="input-group-text search-icon"><i class="fas fa-search"></i></span>
+                <input type="text" name="searchString" id="searchInput" class="form-control search-input"
+                       placeholder="Search for products..." value="@searchString" />
             </div>
         </div>
         <div class="col-md-3">
-            <select name="category" id="categorySelect" class="form-select rounded-pill shadow-sm">
+            <select name="category" id="categorySelect" class="form-select custom-select">
                 <option value="">All Categories</option>
                 @foreach (var cat in categories)
                 {
@@ -31,14 +34,14 @@
             </select>
         </div>
         <div class="col-md-3">
-            <select name="priceSort" id="priceSortSelect" class="form-select rounded-pill shadow-sm">
+            <select name="priceSort" id="priceSortSelect" class="form-select custom-select">
                 <option value="">Sort by Price</option>
-                <option value="asc" selected="@(priceSort == "asc" ? "selected" : null)">Price: Low to High</option>
-                <option value="desc" selected="@(priceSort == "desc" ? "selected" : null)">Price: High to Low</option>
+                <option value="asc" selected="@(priceSort == "asc" ? "selected" : null)">Low to High</option>
+                <option value="desc" selected="@(priceSort == "desc" ? "selected" : null)">High to Low</option>
             </select>
         </div>
         <div class="col-md-2">
-            <button type="submit" class="btn btn-primary w-100 rounded-pill shadow-sm">Search</button>
+            <button type="submit" class="btn modern-btn">Search</button>
         </div>
     </div>
 </form>
@@ -51,46 +54,41 @@
             product.Quantity <= 42 ? "bg-warning" :
             "bg-success";
 
-            <div class="col">
-                <div class="card h-100 shadow-sm border-0 rounded-3 transform-hover">
+            <div class="col" data-aos="fade-up" data-aos-delay="100">
+                <div class="product-card">
                     @if (!string.IsNullOrEmpty(product.ImageFileName))
                     {
-                        <img src="~/products/@product.ImageFileName" class="card-img-top rounded-3" alt="@product.Name"
-                             style="object-fit: cover; height: 200px;" />
+                        <img src="~/products/@product.ImageFileName" class="product-image" alt="@product.Name" />
                     }
                     else
                     {
-                        <img src="~/images/placeholder.png" class="card-img-top rounded-3" alt="No image available"
-                             style="object-fit: cover; height: 200px;" />
+                        <img src="~/images/placeholder.png" class="product-image" alt="No image available" />
                     }
-                    <div class="card-body d-flex flex-column">
-                        <h5 class="card-title fw-bold text-primary">@product.Name</h5>
-                        <p class="card-text"><strong>Brand:</strong> @product.Brand</p>
-                        <p class="card-text"><strong>Category:</strong> @product.Category</p>
-                        <p class="card-text"><strong>Price:</strong> <span class="text-success fw-bold">$@product.Price</span></p>
-
-                        <p class="card-text">
+                    <div class="product-info">
+                        <h5 class="product-title">@product.Name</h5>
+                        <p><strong>Brand:</strong> @product.Brand</p>
+                        <p><strong>Category:</strong> @product.Category</p>
+                        <p class="product-price">$@product.Price</p>
+                        <p>
                             <strong>Quantity:</strong>
                             <span class="badge @quantityClass">@product.Quantity</span>
                         </p>
-
-                        <button class="btn favorite-btn btn-outline-danger rounded-pill" id="favorite-btn-@product.Id" data-product-id="@product.Id">
+                        <button class="btn favorite-btn" id="favorite-btn-@product.Id" data-product-id="@product.Id">
                             <i class="fas fa-heart"></i> Add to Favorites
                         </button>
-
                         <div class="mt-auto">
                             <a asp-controller="ProductDetails" asp-action="Index" asp-route-id="@product.Id"
-                               class="btn btn-outline-secondary me-2 rounded-pill"><i class="fas fa-info-circle"></i> Details</a>
+                               class="btn details-btn"><i class="fas fa-info-circle"></i> Details</a>
                             @if (product.Quantity > 0)
                             {
                                 <a asp-controller="Order" asp-action="Checkout" asp-route-productId="@product.Id"
-                                   class="btn btn-primary rounded-pill">
+                                   class="btn buy-btn">
                                     <i class="fas fa-shopping-cart"></i> Buy Now
                                 </a>
                             }
                             else
                             {
-                                <button class="btn btn-secondary rounded-pill" disabled>Out of Stock</button>
+                                <button class="btn out-of-stock-btn" disabled>Out of Stock</button>
                             }
                         </div>
                     </div>
@@ -100,18 +98,14 @@
     </div>
 </div>
 
-<div id="toast-notification" class="toast align-items-center text-white bg-success border-0 position-fixed bottom-0 end-0 m-3" role="alert" aria-live="assertive" aria-atomic="true">
-    <div class="d-flex">
-        <div class="toast-body">The product was successfully added!</div>
-        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-    </div>
-</div>
-
-<div id="cart-toast-notification" class="toast align-items-center text-white bg-primary border-0 position-fixed bottom-0 end-0 m-3" role="alert" aria-live="assertive" aria-atomic="true">
-    <div class="d-flex">
-        <div class="toast-body">Product added to cart successfully!</div>
-        <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
-    </div>
+<div class="pagination-container mt-4">
+    @Html.PagedListPager(Model, page => Url.Action("Index", new { page }),
+            new PagedListRenderOptions
+    {
+        UlElementClasses = new[] { "pagination" },
+        LiElementClasses = new[] { "page-item" },
+        PageClasses = new[] { "page-link" }
+    })
 </div>
 
 @section Scripts {
@@ -128,113 +122,150 @@
             });
         });
     </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/aos/2.3.4/aos.js"></script>
+    <script>
+        AOS.init({
+            duration: 800,
+            once: true,
+        });
+    </script>
 }
 
 <style>
+
     :root {
-        --bg-light: #f8f9fa;
+        --primary: #00c8ff;
         --bg-dark: #121212;
-        --card-light: white;
-        --card-dark: #1c1c1c;
-        --text-light: #333;
-        --text-dark: #f8f9fa;
-        --primary-light: #007bff;
-        --primary-dark: #00c8ff;
-        --border-light: #ddd;
-        --border-dark: #444;
-    }
-
-    .favorite-btn {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        padding: 10px 15px;
-        border-radius: 50px; 
-        transition: background-color 0.3s, color 0.3s, transform 0.3s;
-        font-weight: 500;
-    }
-
-    .favorite-btn i {
-        margin-right: 5px;
-    }
-
-    .favorite-btn:hover {
-        background-color: #ff6b6b; 
-        color: white; 
-        transform: scale(1.05); 
+        --bg-light: #f8f9fa;
+        --card-bg-dark: rgba(255, 255, 255, 0.1);
+        --card-bg-light: #ffffff;
+        --glass-bg-dark: rgba(255, 255, 255, 0.15);
+        --glass-bg-light: rgba(0, 0, 0, 0.05);
+        --text-light: #f8f9fa;
+        --text-dark: #333333;
+        --border-dark: rgba(255, 255, 255, 0.2);
+        --border-light: rgba(0, 0, 0, 0.1);
     }
 
     body {
-        background-color: var(--bg-light);
-        color: var(--text-light);
+        font-family: 'Poppins', sans-serif;
         transition: all 0.3s ease-in-out;
-        font-family: 'Roboto', sans-serif;
     }
-
-    media (prefers-color-scheme: dark) {
-        body {
-            background-color: var(--bg-dark);
+        body:not(.dark-mode) {
+            background: var(--bg-light);
             color: var(--text-dark);
         }
-
-        .card {
-            background: var(--card-dark);
-            border: 1px solid var(--border-dark);
+        body.dark-mode {
+            background: var(--bg-dark);
+            color: var(--text-light);
         }
 
-        .btn-primary {
-            background: var(--primary-dark);
-            border-color: var(--primary-dark);
+    .text-gradient {
+        background: linear-gradient(to right, #00c8ff, #ff00ff);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+    }
+
+    .search-icon {
+        background: var(--primary);
+        color: white;
+        border-radius: 30px 0 0 30px;
+    }
+
+    .search-input {
+        border-radius: 30px;
+        padding: 10px;
+    }
+
+    .custom-select {
+        border-radius: 20px;
+        padding: 8px;
+    }
+
+    .btn {
+        border-radius: 30px;
+        transition: all 0.3s ease-in-out;
+    }
+
+    .modern-btn {
+        background: var(--primary);
+        color: white;
+        border: none;
+    }
+
+        .modern-btn:hover {
+            background: #0088cc;
         }
 
-        .btn-outline-secondary {
-            color: var(--primary-dark);
-            border-color: var(--primary-dark);
-        }
+    .product-card {
+        border-radius: 20px;
+        padding: 20px;
+        backdrop-filter: blur(10px);
+        transition: transform 0.3s, box-shadow 0.3s;
+    }
 
-        .btn-outline-secondary:hover {
-            background: var(--primary-dark);
+    body.dark-mode .product-card {
+        background: var(--glass-bg-dark);
+        box-shadow: 0 10px 30px var(--border-dark);
+    }
+
+    body:not(.dark-mode) .product-card {
+        background: var(--glass-bg-light);
+        box-shadow: 0 10px 30px var(--border-light);
+    }
+
+    .product-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .product-image {
+        width: 100%;
+        border-radius: 15px;
+        object-fit: cover;
+        height: 200px;
+    }
+
+    .product-price {
+        font-size: 1.4rem;
+        font-weight: bold;
+        color: var(--primary);
+    }
+
+    .favorite-btn {
+        background: transparent;
+        border: 2px solid var(--primary);
+        color: var(--primary);
+    }
+
+        .favorite-btn:hover {
+            background: var(--primary);
             color: white;
         }
+
+    .details-btn {
+        background: none;
+        border: 2px solid var(--primary);
+        color: var(--primary);
     }
 
-    .input-group-text {
-        border-radius: 50px 0 0 50px;
+        .details-btn:hover {
+            background: var(--primary);
+            color: white;
+        }
+
+    .buy-btn {
+        background: var(--primary);
+        color: white;
     }
 
-    .form-control {
-        border-radius: 50px;
-        transition: 0.2s;
-    }
+        .buy-btn:hover {
+            background: #0088cc;
+        }
 
-    .form-control:focus {
-        box-shadow: 0 0 10px var(--primary-light);
-        border-color: var(--primary-light);
-    }
-
-    .btn-primary {
-        border-radius: 50px;
-        transition: 0.2s;
-    }
-
-    .btn-primary:hover {
-        box-shadow: 0 0 10px var(--primary-light);
-    }
-
-
-    .card {
-        border-radius: 15px;
-        transition: 0.3s;
-    }
-
-    .card:hover {
-        transform: scale(1.02);
-        box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.15);
-    }
-
-    .badge {
-        font-size: 14px;
-        padding: 5px 10px;
+    .out-of-stock-btn {
+        background: gray;
+        color: white;
+        cursor: not-allowed;
     }
 
     .bg-danger {
@@ -249,11 +280,42 @@
     .bg-success {
         background-color: #28a745 !important;
     }
+
+    .pagination-container {
+        display: flex;
+        justify-content: center;
+    }
+
+    .pagination .page-link {
+        border-radius: 10px;
+        transition: all 0.3s ease-in-out;
+    }
+
+    body.dark-mode .pagination .page-link {
+        background: var(--glass-bg-dark);
+        color: var(--primary);
+    }
+
+    body:not(.dark-mode) .pagination .page-link {
+        background: var(--glass-bg-light);
+        color: var(--primary);
+    }
+
+    .pagination .page-link:hover {
+        background: var(--primary);
+        color: white;
+    }
+
+    .pagination .active .page-link {
+        background: var(--primary) !important;
+        color: white !important;
+        font-weight: bold !important;
+    }
 </style>
 
+<script>
 
-<script>  
-document.addEventListener('DOMContentLoaded', function () {
+    document.addEventListener('DOMContentLoaded', function () {
         document.querySelectorAll(".favorite-btn").forEach(button => {
             let productId = button.getAttribute("data-product-id");
 
@@ -269,7 +331,6 @@ document.addEventListener('DOMContentLoaded', function () {
                         button.classList.add("btn-outline-danger");
                     }
                 });
-
 
             button.addEventListener("click", function () {
                 fetch(`/Favorites/AddToFavorites`, {
@@ -297,35 +358,51 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-         document.addEventListener('DOMContentLoaded', function () {
-            document.querySelectorAll(".add-to-cart-btn").forEach(button => {
-                button.addEventListener("click", function () {
-                    let productId = this.getAttribute("data-product-id");
-                    let productName = this.getAttribute("data-product-name");
-                    let productPrice = this.getAttribute("data-product-price");
-                    let productImage = this.getAttribute("data-product-image");
+    document.addEventListener("scroll", function () {
+        document.querySelectorAll(".card").forEach((card) => {
+            if (card.getBoundingClientRect().top < window.innerHeight - 100) {
+                card.classList.add("visible");
+            }
+        });
+    });
 
-                    fetch(`/Cart/AddToCart`, {
-                        method: "POST",
-                        headers: { "Content-Type": "application/json" },
-                        body: JSON.stringify({
-                            productId: parseInt(productId),
-                            name: productName,
-                            price: parseFloat(productPrice),
-                            imageFileName: productImage
-                        })
+    document.getElementById('searchInput').addEventListener('input', function () {
+        let searchQuery = this.value.toLowerCase();
+        document.querySelectorAll('.card').forEach(card => {
+            let productName = card.querySelector('.card-title').textContent.toLowerCase();
+            card.style.display = productName.includes(searchQuery) ? 'block' : 'none';
+        });
+    });
+
+    document.addEventListener('DOMContentLoaded', function () {
+        document.querySelectorAll(".add-to-cart-btn").forEach(button => {
+            button.addEventListener("click", function () {
+                let productId = this.getAttribute("data-product-id");
+                let productName = this.getAttribute("data-product-name");
+                let productPrice = this.getAttribute("data-product-price");
+                let productImage = this.getAttribute("data-product-image");
+
+                fetch(`/Cart/AddToCart`, {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({
+                        productId: parseInt(productId),
+                        name: productName,
+                        price: parseFloat(productPrice),
+                        imageFileName: productImage
                     })
-                    .then(response => response.json())
-                    .then(data => {
-                        if (data.success) {
-                            let toast = new bootstrap.Toast(document.getElementById('cart-toast-notification'));
-                            toast.show();
-                        } else {
-                            alert(data.message);
-                        }
-                    })
-                    .catch(error => console.error("Error:", error));
-                });
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        let toast = new bootstrap.Toast(document.getElementById('cart-toast-notification'));
+                        toast.show();
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => console.error("Error:", error));
             });
         });
+    });
 </script>

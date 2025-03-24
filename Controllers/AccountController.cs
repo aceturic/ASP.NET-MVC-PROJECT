@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNet.Identity.Owin;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using UsersApp.Models;
@@ -150,6 +151,83 @@ namespace UsersApp.Controllers
                 ModelState.AddModelError("", "Something went wrong. try again.");
                 return View(model);
             }
+        }
+
+        [HttpGet]
+        [Authorize]
+        public async Task<IActionResult> Profile()
+        {
+            var userId = User.Identity.Name; 
+            var user = await userManager.FindByNameAsync(userId);
+            if (user == null)
+            {
+                return NotFound();
+            }
+
+            var model = new UserProfileViewModel
+            {
+                Email = user.Email,
+                Name = user.FullName,
+                CurrentPassword = string.Empty,
+                NewPassword = string.Empty,
+                ConfirmPassword = string.Empty
+            };
+
+            return View(model);
+        }
+
+        [HttpPost]
+        [Authorize]
+        [ValidateAntiForgeryToken]
+        public async Task<IActionResult> Profile(UserProfileViewModel model)
+        {
+            if (ModelState.IsValid)
+            {
+                var user = await userManager.FindByNameAsync(model.Email);
+                if (user == null)
+                {
+                    return NotFound();
+                }
+
+                user.FullName = model.Name;
+                user.Email = model.Email;
+
+                var updateResult = await userManager.UpdateAsync(user);
+                if (updateResult.Succeeded)
+                {
+                    if (!string.IsNullOrEmpty(model.CurrentPassword) && !string.IsNullOrEmpty(model.NewPassword))
+                    {
+                        var passwordChangeResult = await userManager.ChangePasswordAsync(user, model.CurrentPassword, model.NewPassword);
+                        if (passwordChangeResult.Succeeded)
+                        {
+                            TempData["SuccessMessage"] = "Profile and password updated successfully.";
+                            await signInManager.SignInAsync(user, isPersistent: false);
+                            return RedirectToAction("Profile");
+                        }
+                        else
+                        {
+                            foreach (var error in passwordChangeResult.Errors)
+                            {
+                                ModelState.AddModelError("", error.Description);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        TempData["SuccessMessage"] = "Profile updated successfully.";
+                        return RedirectToAction("Profile");
+                    }
+                }
+                else
+                {
+                    foreach (var error in updateResult.Errors)
+                    {
+                        ModelState.AddModelError("", error.Description);
+                    }
+                }
+            }
+
+            return View(model);
         }
 
         [HttpPost]
