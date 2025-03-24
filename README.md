@@ -12,7 +12,7 @@ Briefly describe the purpose of your project, its main features, and the problem
 - [License](#license)
 
 ## Features
-
+Using my skid skills with burpsuite my tests indicates that there is no sql injection avaible(i am not too sure as i said my skid skills)
 ## Installation
 Open the solution and navigate in the solution explorer to appsettings.json and connect your database example:
 "ConnectionStrings": {
