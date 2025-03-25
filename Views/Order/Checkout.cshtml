@@ -93,3 +93,86 @@
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }
+
+<style>
+    body {
+        font-family: 'Poppins', sans-serif;
+    }
+
+    .card {
+        border-radius: 15px;
+        border: none;
+        animation: fadeIn 0.5s ease-in-out;
+        background: white;
+    }
+
+    h2 {
+        color: #4c4b54;
+        font-weight: 600;
+        transition: color 0.3s ease-in-out;
+    }
+
+ 
+    media (prefers-color-scheme: dark) {
+        h2
+
+    {
+        color: #f8f9fa; 
+    }
+
+    .form-control {
+        border-radius: 8px;
+        padding: 10px;
+        transition: 0.3s;
+    }
+
+        .form-control:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 8px rgba(102, 126, 234, 0.5);
+        }
+
+    .btn-primary {
+        background: #667eea;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: 0.3s;
+    }
+
+        .btn-primary:hover {
+            background: #5648a5;
+            transform: scale(1.02);
+        }
+
+    keyframes fadeIn {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
+    }
+</style>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+    const inputs = document.querySelectorAll(".form-control");
+
+    inputs.forEach(input => {
+        input.addEventListener("focus", () => {
+            input.style.background = "#f8f9fa";
+        });
+
+        input.addEventListener("blur", () => {
+            input.style.background = "";
+        });
+    });
+});
+
+    </script>
