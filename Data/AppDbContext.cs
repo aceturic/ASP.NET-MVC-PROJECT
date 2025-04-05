@@ -13,28 +13,38 @@ namespace UsersApp.Data
         }
 
         public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderItem> OrderItems { get; set; }
         public DbSet<Product> Products { get; set; }
         public DbSet<Review> Reviews { get; set; }
         public DbSet<FavoriteProduct> FavoriteProducts { get; set; }
         public DbSet<Ticket> Tickets { get; set; }
         public DbSet<Message> Messages { get; set; }
 
+
         protected override void OnModelCreating(ModelBuilder builder)
         {
             base.OnModelCreating(builder);
 
+            // Продукт и ревю
             builder.Entity<Product>()
                 .HasMany(p => p.Reviews)
                 .WithOne()
                 .HasForeignKey(r => r.ProductId)
                 .OnDelete(DeleteBehavior.Cascade);
 
-            builder.Entity<Order>()
-                .HasOne(o => o.Product)
-                .WithMany()
-                .HasForeignKey(o => o.ProductId)
-                .OnDelete(DeleteBehavior.Restrict);
+            // ✅ Релация Order → OrderItem
+            builder.Entity<OrderItem>()
+                .HasOne(oi => oi.Order)
+                .WithMany(o => o.Items)
+                .HasForeignKey(oi => oi.OrderId);
 
+            // ✅ Релация OrderItem → Product
+            builder.Entity<OrderItem>()
+                .HasOne(oi => oi.Product)
+                .WithMany()
+                .HasForeignKey(oi => oi.ProductId);
+
+            // Роля admin
             var adminRole = new IdentityRole
             {
                 Id = "1",
@@ -44,5 +54,6 @@ namespace UsersApp.Data
 
             builder.Entity<IdentityRole>().HasData(adminRole);
         }
+
     }
 }

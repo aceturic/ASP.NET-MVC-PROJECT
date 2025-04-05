@@ -11,6 +11,8 @@
 </head>
 <body>
     <header>
+        @* navbar - bez komentar *@
+
         <nav class="navbar navbar-expand-lg navbar-dark bg-gradient shadow">
             <div class="container">
                 <a class="navbar-brand fw-bold text-uppercase" asp-area="" asp-controller="Home" asp-action="Index">
@@ -20,7 +22,6 @@
                         aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
-
                 <div class="collapse navbar-collapse" id="navbarNav">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
@@ -52,7 +53,12 @@
                                     <i class="fas fa-heart"></i> Favorites
                                 </a>
                             </li>
-                        
+
+                        <li class="nav-item">
+                            <a class="nav-link" asp-controller="Cart" asp-action="Index">
+                                <i class="fa-solid fa-cart-shopping"></i> Cart
+                            </a>
+                        </li>
 
 
                         <li class="nav-item">
@@ -61,7 +67,7 @@
                             </a>
                         </li>
                     </ul>
-
+                   @* tui e dark mode buttona po-dobre ne go pipai che tuka staaa andibul morkov *@
                     <div class="d-flex align-items-center">
                         <button id="darkModeToggle" class="btn btn-outline-light me-2 rounded-pill px-3">
                             🌙 Dark Mode
@@ -78,7 +84,7 @@
             @RenderBody()
         </main>
     </div>
-
+    @* footer ne pipai che go nasrah 3 puti *@
     <footer>
         <p>&copy; 2025 UsersApp. All rights reserved.</p>
     </footer>

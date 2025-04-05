@@ -4,25 +4,25 @@
     ViewData["Title"] = "Your Purchase History";
 }
 
-<h2>Your Purchase History</h2>
+<h2 class="mb-4">@ViewData["Title"]</h2>
 
 @if (!string.IsNullOrEmpty(ViewBag.Message))
 {
-    <p>@ViewBag.Message</p>
+    <div class="alert alert-info">@ViewBag.Message</div>
 }
 else if (Model == null || !Model.Any())
 {
-    <p>You have no purchase history.</p>
+    <div class="alert alert-warning">You have no purchase history.</div>
 }
 else
 {
-    <table class="table table-striped">
-        <thead>
+    <table class="table table-bordered">
+        <thead class="table-dark">
             <tr>
-                <th>Order ID</th>
-                <th>Product</th>
-                <th>Price</th>
-                <th>Order Date</th>
+                <th>#</th>
+                <th>Products</th>
+                <th>Total</th>
+                <th>Date</th>
                 <th>Delivery Address</th>
             </tr>
         </thead>
@@ -31,8 +31,19 @@ else
             {
                 <tr>
                     <td>@order.Id</td>
-                    <td>@(order.Product != null ? order.Product.Name : "Unknown Product")</td>
-                    <td>@order.Price.ToString("C")</td>
+                    <td>
+                        <ul class="mb-0">
+                            @foreach (var item in order.Items)
+                            {
+                                <li>@item.Product?.Name x @item.Quantity (@item.Price.ToString("C"))</li>
+                            }
+                        </ul>
+                    </td>
+                    <td>
+                        <strong>
+                            @order.Items.Sum(i => i.Price * i.Quantity).ToString("C")
+                        </strong>
+                    </td>
                     <td>@order.OrderDate.ToString("yyyy-MM-dd")</td>
                     <td>@order.DeliveryAddress, @order.City, @order.Country</td>
                 </tr>

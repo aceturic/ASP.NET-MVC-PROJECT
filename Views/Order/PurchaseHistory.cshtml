@@ -1,4 +1,4 @@
-﻿@model List<UsersApp.Models.Order>
+﻿@model IEnumerable<UsersApp.Models.Order>
 
 @{
     ViewData["Title"] = "Purchase History";
@@ -21,46 +21,65 @@
                 <div class="col-md-6 col-lg-4 mb-4">
                     <div class="card shadow-sm border-0">
                         <div class="card-body">
-                            <h5 class="card-title text-primary">@order.Product.Name</h5>
-                            <p class="card-text">
-                                <strong>Price:</strong> <span class="badge bg-success">@order.Price.ToString("C")</span>
-                            </p>
+
+                            <h5 class="card-title text-primary">Поръчани продукти:</h5>
+                            <ul class="mb-2">
+                                @foreach (var item in order.Items)
+                                {
+                                    <li>@item.Product.Name x @item.Quantity (@item.Price.ToString("C"))</li>
+                                }
+                            </ul>
+
                             <p>
-                                <strong>Delivery Address:</strong> @order.DeliveryAddress, @order.City, @order.Country (@order.ZipCode)
-                            </p>
-                            <p><strong>Phone:</strong> @order.PhoneNumber</p>
-                            <p class="text-muted">
-                                <strong>Order Date:</strong> <span class="badge bg-secondary">@order.OrderDate.ToString("yyyy-MM-dd HH:mm")</span>
+                                <strong>Общо:</strong> <span class="badge bg-success">
+                                    @order.Items.Sum(i => i.Price * i.Quantity).ToString("C")
+                                </span>
                             </p>
 
-                            <!-- Order Status -->
+                            <p><strong>Адрес:</strong> @order.DeliveryAddress, @order.City, @order.Country (@order.ZipCode)</p>
+                            <p><strong>Телефон:</strong> @order.PhoneNumber</p>
+                            <p class="text-muted">
+                                <strong>Дата:</strong> <span class="badge bg-secondary">@order.OrderDate.ToString("yyyy-MM-dd HH:mm")</span>
+                            </p>
+
+                            <!-- Статус -->
                             <p>
-                                <strong>Status:</strong>
+                                <strong>Статус:</strong>
                                 @if (order.Status == OrderStatus.PendingCancellation)
                                 {
-                                    <span class="badge bg-warning">Pending Approval</span>
+                                    <span class="badge bg-warning">Чака одобрение</span>
                                 }
                                 else if (order.Status == OrderStatus.Cancelled)
                                 {
-                                    <span class="badge bg-danger">Cancelled</span>
+                                    <span class="badge bg-danger">Отменена</span>
                                 }
                                 else if (order.Status == OrderStatus.Rejected)
                                 {
-                                    <span class="badge bg-info">Cancellation Rejected</span>
+                                    <span class="badge bg-info">Отказано</span>
                                 }
                                 else
                                 {
-                                    <span class="badge bg-success">Processing</span>
+                                    <span class="badge bg-success">Обработва се</span>
                                 }
                             </p>
 
                             <!-- Buttons for Actions -->
                             <div class="d-flex gap-2 mt-3">
                                 <!-- Product Details -->
-                                <a asp-controller="ProductDetails" asp-action="Index" asp-route-id="@order.ProductId"
-                                   class="btn btn-outline-secondary flex-grow-1 text-center">
-                                    <i class="fas fa-info-circle"></i> Details
-                                </a>
+                                <h6 class="text-muted">Продукти:</h6>
+                                <ul>
+                                    @foreach (var item in order.Items)
+                                    {
+                                        <li>
+                                            @item.Product.Name
+                                            <a asp-controller="ProductDetails" asp-action="Index" asp-route-id="@item.ProductId"
+                                               class="btn btn-sm btn-outline-secondary ms-2">
+                                                <i class="fas fa-info-circle"></i> Детайли
+                                            </a>
+                                        </li>
+                                    }
+                                </ul>
+
 
                                 <!-- Request Cancellation -->
                                 @if (order.Status == OrderStatus.Processing)
@@ -71,7 +90,6 @@
                                     </a>
                                 }
                             </div>
-
                         </div>
                     </div>
                 </div>

@@ -9,20 +9,42 @@
 
     <div class="card shadow-sm border-0 mt-4">
         <div class="card-body">
-            <h5 class="card-title text-primary">@Model.Product.Name</h5>
-            <p><strong>Price:</strong> @Model.Price.ToString("C")</p>
-            <p><strong>Delivery Address:</strong> @Model.DeliveryAddress, @Model.City, @Model.Country (@Model.ZipCode)</p>
-            <p><strong>Phone:</strong> @Model.PhoneNumber</p>
-            <p class="text-muted"><strong>Order Date:</strong> @Model.OrderDate.ToString("yyyy-MM-dd HH:mm")</p>
+
+            <h5 class="text-primary">Продукти в поръчката:</h5>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Продукт</th>
+                        <th>Количество</th>
+                        <th>Ед. Цена</th>
+                        <th>Общо</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.Items)
+                    {
+                        <tr>
+                            <td>@item.Product.Name</td>
+                            <td>@item.Quantity</td>
+                            <td>@item.Price.ToString("C")</td>
+                            <td>@(item.Price * item.Quantity).ToString("C")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            <p><strong>Доставка до:</strong> @Model.DeliveryAddress, @Model.City, @Model.Country (@Model.ZipCode)</p>
+            <p><strong>Телефон:</strong> @Model.PhoneNumber</p>
+            <p class="text-muted"><strong>Дата на поръчка:</strong> @Model.OrderDate.ToString("yyyy-MM-dd HH:mm")</p>
 
             <div class="alert alert-warning">
-                <strong>Note:</strong> Your order will not be immediately canceled. An admin must approve it first.
+                <strong>Внимание:</strong> Заявката за анулиране ще бъде изпратена за одобрение от администратор.
             </div>
 
             <form asp-action="SubmitCancelRequest" method="post">
                 <input type="hidden" name="id" value="@Model.Id" />
-                <button type="submit" class="btn btn-danger">Confirm Cancellation Request</button>
-                <a asp-action="PurchaseHistory" class="btn btn-secondary">Back to Orders</a>
+                <button type="submit" class="btn btn-danger">Потвърди анулиране</button>
+                <a asp-action="PurchaseHistory" class="btn btn-secondary">Обратно към поръчките</a>
             </form>
         </div>
     </div>

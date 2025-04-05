@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.Identity;
+﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using UsersApp.Data;
 using UsersApp.Models;
@@ -55,13 +55,21 @@ app.UseHttpsRedirection();
 app.UseStaticFiles();
 
 app.UseRouting();
-
+app.UseSession();
 app.UseAuthorization();
 
 app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage(); // показва подробни грешки
+}
+else
+{
+    app.UseExceptionHandler("/Home/Error"); // показва потребителско съобщение
+}
 
 
 app.Run();

@@ -25,12 +25,14 @@ namespace UsersApp.Controllers
         public async Task<IActionResult> CancelRequests()
         {
             var orders = await _context.Orders
-                .Include(o => o.Product)
                 .Where(o => o.Status == OrderStatus.PendingCancellation)
+                .Include(o => o.Items)
+                    .ThenInclude(i => i.Product)
                 .ToListAsync();
 
             return View(orders);
         }
+
 
         [HttpPost]
         public async Task<IActionResult> ApproveCancellation(int id)

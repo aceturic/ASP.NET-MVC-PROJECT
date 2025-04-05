@@ -6,46 +6,143 @@
 <style>
     body {
         background: #f7f9fc;
+        font-family: 'Arial', sans-serif;
+        overflow: hidden;
     }
+
     .order-container {
         margin-top: 100px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 80vh;
     }
+
     .order-card {
         border: none;
         border-radius: 15px;
         box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
         background: #fff;
-    }
-    .order-card .card-body {
-        padding: 2rem;
         text-align: center;
+        padding: 2rem;
+        animation: fadeIn 0.8s ease-in-out;
+        position: relative;
     }
-    .order-card h2 {
-        font-size: 2.5rem;
-        margin-bottom: 1rem;
+
+        .order-card h2 {
+            font-size: 2.5rem;
+            color: #28a745;
+            margin-bottom: 1rem;
+        }
+
+        .order-card p {
+            font-size: 1.2rem;
+            color: #555;
+            margin-bottom: 1.5rem;
+        }
+
+    .success-icon {
+        font-size: 4rem;
         color: #28a745;
+        margin-bottom: 1rem;
     }
-    .order-card p {
-        font-size: 1.1rem;
-        color: #555;
-        margin-bottom: 1.5rem;
-    }
+
     .btn-back {
         padding: 0.75rem 1.5rem;
         font-size: 1rem;
+        border-radius: 8px;
+        transition: 0.3s;
+    }
+
+        .btn-back:hover {
+            background-color: #218838;
+            color: #fff;
+        }
+
+    .confetti {
+        position: fixed;
+        width: 8px;
+        height: 8px;
+        background: red;
+        opacity: 0.8;
+        top: 0;
+        z-index: 9999;
+        will-change: transform, opacity;
+    }
+
+    keyframes fadeIn {
+        from
+
+    {
+        opacity: 0;
+        transform: translateY(-20px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+
     }
 </style>
 
 <div class="container order-container">
-    <div class="row justify-content-center">
-        <div class="col-md-6">
-            <div class="card order-card">
-                <div class="card-body">
-                    <h2>Order Placed Successfully!</h2>
-                    <p>Thank you for your purchase. Your order will be processed soon.</p>
-                    <a asp-controller="Store" asp-action="Index" class="btn btn-primary btn-back">Back to Store</a>
-                </div>
-            </div>
-        </div>
+    <div class="card order-card">
+        <i class="fas fa-check-circle success-icon"></i>
+        <h2>Order Placed Successfully!</h2>
+        <p>Thank you for your purchase. Your order will be processed soon.</p>
+        <a asp-controller="Store" asp-action="Index" class="btn btn-primary btn-back" onclick="saveOrderSuccess()">Back to Store</a>
     </div>
 </div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        function getWeightedRandomPosition() {
+            return Math.random() < 0.65 
+                ? Math.random() * (window.innerWidth * 0.5) 
+                : Math.random() * window.innerWidth;
+        }
+
+        function createConfettiPiece() {
+            let confetti = document.createElement("div");
+            confetti.classList.add("confetti");
+            document.body.appendChild(confetti);
+
+            let colors = ["#ff4757", "#ffa502", "#2ed573", "#1e90ff", "#3742fa", "#ff66b2"];
+            confetti.style.background = colors[Math.floor(Math.random() * colors.length)];
+
+            let startX = getWeightedRandomPosition();
+            let endX = startX + (Math.random() * 200 - 100);
+
+            confetti.style.left = startX + "px";
+            confetti.style.width = Math.random() * 10 + "px";
+            confetti.style.height = confetti.style.width;
+
+            let duration = Math.random() * 3 + 2;
+
+            confetti.animate([
+                { transform: `translateY(-10px) rotate(0deg)`, opacity: 1 },
+                { transform: `translate(${endX - startX}px, 100vh) rotate(720deg)`, opacity: 0 }
+            ], {
+                duration: duration * 1000,
+                easing: 'ease-out',
+                iterations: 1,
+                fill: 'forwards'
+            });
+
+            setTimeout(() => confetti.remove(), duration * 1000);
+        }
+
+        let confettiCount = 150;  
+        let confettiInterval = 10; 
+
+        for (let i = 0; i < confettiCount; i++) {
+            setTimeout(createConfettiPiece, Math.random() * confettiInterval * confettiCount);
+        }
+    });
+
+
+       function saveOrderSuccess() {
+        localStorage.setItem("orderSuccess", "true");
+    }
+</script>

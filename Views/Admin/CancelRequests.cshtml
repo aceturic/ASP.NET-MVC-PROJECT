@@ -1,9 +1,10 @@
-﻿@model List<UsersApp.Models.Order>
+﻿@model IEnumerable<UsersApp.Models.Order>
 
 @{
     ViewData["Title"] = "Cancel Requests";
 }
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+
 <div class="container mt-4">
     <h2 class="text-center">🛑 Order Cancellation Requests</h2>
 
@@ -18,9 +19,9 @@
         <table class="table table-striped mt-3">
             <thead>
                 <tr>
-                    <th>Product</th>
+                    <th>Products</th>
                     <th>User</th>
-                    <th>Price</th>
+                    <th>Total</th>
                     <th>Request Date</th>
                     <th>Actions</th>
                 </tr>
@@ -29,9 +30,18 @@
                 @foreach (var order in Model)
                 {
                     <tr>
-                        <td>@order.Product.Name</td>
+                        <td>
+                            <ul class="mb-0">
+                                @foreach (var item in order.Items)
+                                {
+                                    <li>@item.Product.Name x @item.Quantity</li>
+                                }
+                            </ul>
+                        </td>
                         <td>@order.UserEmail</td>
-                        <td>@order.Price.ToString("C")</td>
+                        <td>
+                            @order.Items.Sum(i => i.Price * i.Quantity).ToString("C")
+                        </td>
                         <td>@order.OrderDate.ToString("yyyy-MM-dd HH:mm")</td>
                         <td>
                             <form method="post" asp-action="ApproveCancellation" class="d-inline">

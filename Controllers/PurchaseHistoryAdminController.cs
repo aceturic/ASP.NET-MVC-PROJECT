@@ -1,11 +1,9 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using UsersApp.Models;
-using System;
 using System.Linq;
 using System.Threading.Tasks;
 using UsersApp.Data;
-using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.AspNetCore.Authorization;
 
 namespace UsersApp.Controllers
@@ -23,81 +21,84 @@ namespace UsersApp.Controllers
         // GET: PurchaseHistoryAdmin
         public async Task<IActionResult> Index()
         {
-            var orders = _context.Orders.Include(o => o.Product);
-            return View(await orders.ToListAsync());
+            var orders = await _context.Orders
+                .Include(o => o.Items)
+                    .ThenInclude(i => i.Product)
+                .OrderByDescending(o => o.OrderDate)
+                .ToListAsync();
+
+            return View(orders);
         }
 
         // GET: PurchaseHistoryAdmin/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
-
-            ViewBag.Products = new SelectList(await _context.Products.ToListAsync(), "Id", "Name");
 
             var order = await _context.Orders
-                .Include(o => o.Product)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .Include(o => o.Items)
+                    .ThenInclude(i => i.Product)
+                .FirstOrDefaultAsync(o => o.Id == id);
+
             if (order == null)
-            {
                 return NotFound();
-            }
+
             return View(order);
         }
 
+        // POST: PurchaseHistoryAdmin/Edit/5
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,ProductId,Price,FirstName,LastName,DeliveryAddress,City,Country,ZipCode,PhoneNumber,UserEmail,OrderDate")] Order order)
+        public async Task<IActionResult> Edit(int id, Order updatedOrder)
         {
-            if (id != order.Id)
-            {
+            if (id != updatedOrder.Id)
                 return NotFound();
-            }
 
-            if (ModelState.IsValid)
+            if (!ModelState.IsValid)
+                return View(updatedOrder);
+
+            try
             {
-                try
-                {
-                    _context.Update(order);
-                    await _context.SaveChangesAsync();
-                }
-                catch (DbUpdateConcurrencyException)
-                {
-                    if (!OrderExists(order.Id))
-                    {
-                        return NotFound();
-                    }
-                    else
-                    {
-                        ModelState.AddModelError("", "Concurrency error: The order was modified by another process.");
-                        return View(order);
-                    }
-                }
+                var order = await _context.Orders.FindAsync(id);
+                if (order == null) return NotFound();
+
+                order.FirstName = updatedOrder.FirstName;
+                order.LastName = updatedOrder.LastName;
+                order.DeliveryAddress = updatedOrder.DeliveryAddress;
+                order.City = updatedOrder.City;
+                order.Country = updatedOrder.Country;
+                order.ZipCode = updatedOrder.ZipCode;
+                order.PhoneNumber = updatedOrder.PhoneNumber;
+
+                _context.Update(order);
+                await _context.SaveChangesAsync();
                 TempData["SuccessMessage"] = "Order updated successfully!";
-                return RedirectToAction(nameof(Index));
+            }
+            catch (DbUpdateConcurrencyException)
+            {
+                if (!OrderExists(updatedOrder.Id))
+                    return NotFound();
+                else
+                    throw;
             }
 
-            ViewBag.Products = new SelectList(await _context.Products.ToListAsync(), "Id", "Name", order.ProductId);
-            return View(order);
+            return RedirectToAction(nameof(Index));
         }
 
         // GET: PurchaseHistoryAdmin/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
             if (id == null)
-            {
                 return NotFound();
-            }
 
             var order = await _context.Orders
-                .Include(o => o.Product)
-                .FirstOrDefaultAsync(m => m.Id == id);
+                .Include(o => o.Items)
+                    .ThenInclude(i => i.Product)
+                .FirstOrDefaultAsync(o => o.Id == id);
+
             if (order == null)
-            {
                 return NotFound();
-            }
 
             return View(order);
         }
@@ -107,9 +108,17 @@ namespace UsersApp.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
-            var order = await _context.Orders.FindAsync(id);
+            var order = await _context.Orders
+                .Include(o => o.Items)
+                .FirstOrDefaultAsync(o => o.Id == id);
+
+            if (order == null)
+                return NotFound();
+
+            _context.OrderItems.RemoveRange(order.Items);
             _context.Orders.Remove(order);
             await _context.SaveChangesAsync();
+
             return RedirectToAction(nameof(Index));
         }
 

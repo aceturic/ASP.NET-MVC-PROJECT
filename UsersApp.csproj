@@ -11,6 +11,15 @@
   </ItemGroup>
 
   <ItemGroup>
+    <None Remove="Controllers\NewFile.txt" />
+    <None Remove="ViewModels\NewFile.txt" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="Extensions\SessionExtensions.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AspNetCoreHero.ToastNotification" Version="1.1.0" />
     <PackageReference Include="DiscordRichPresence" Version="1.2.1.24" />
     <PackageReference Include="EntityFramework" Version="6.5.1" />

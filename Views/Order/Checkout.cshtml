@@ -1,178 +1,408 @@
-﻿@model UsersApp.Models.Order
+﻿@model UsersApp.ViewModels.CartViewModel
 
 @{
     ViewData["Title"] = "Checkout";
     Layout = "~/Views/Shared/_Layout.cshtml";
 }
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-<div class="container d-flex justify-content-center align-items-center vh-100">
-    <div class="card p-4 shadow-lg" style="max-width: 500px; width: 100%; border-radius: 10px;">
-        <h2 class="text-center mb-4">Secure Checkout</h2>
 
-        @if (!ViewData.ModelState.IsValid)
+<!-- Google Fonts & FontAwesome -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+
+<div class="container mt-5">
+    <div class="glass-card p-5">
+        <div class="d-flex justify-content-between align-items-center mb-5">
+            <h1 class="page-title">Checkout</h1>
+            <div class="total-badge">
+                <span class="total-label">Total:</span>
+                <span class="price-badge" id="total-price">@Model.GrandTotal лв.</span>
+            </div>
+        </div>
+
+        @if (TempData["ErrorMessage"] != null)
         {
-            <div class="alert alert-danger">
-                <ul class="mb-0">
-                    @foreach (var error in ViewData.ModelState.Values.SelectMany(v => v.Errors))
-                    {
-                        <li>@error.ErrorMessage</li>
-                    }
-                </ul>
+            <div class="alert alert-danger alert-modern">
+                <i class="fas fa-exclamation-circle me-2"></i>@TempData["ErrorMessage"]
             </div>
         }
 
+        <div class="cart-items mb-5">
+            <h3 class="section-title mb-4">Your Items</h3>
+            <div class="items-grid">
+                @foreach (var item in Model.Items)
+                {
+                    <div class="cart-item">
+                        <img src="~/products/@item.ImageFileName" alt="@item.ProductName" class="item-image">
+                        <div class="item-details">
+                            <h4 class="item-name">@item.ProductName</h4>
+                            <div class="item-meta">
+                                <span class="item-price">@item.Price лв.</span>
+                                <span class="item-quantity">x @item.Quantity</span>
+                                <span class="item-total">@item.TotalPrice лв.</span>
+                            </div>
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
         <form asp-controller="Order" asp-action="ConfirmOrder" method="post">
-            <input type="hidden" asp-for="ProductId" />
-
-            <div class="mb-3">
-                <label class="form-label">Product</label>
-                <input type="text" class="form-control bg-light" value="@Model.Product.Name" readonly />
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Price</label>
-                <input type="text" class="form-control bg-light" value="@Model.Price" readonly />
-            </div>
-
-        <div class="row">
-            <div class="col-md-6 mb-3">
-                <label class="form-label">First Name</label>
-                <input type="text" class="form-control" asp-for="FirstName" required placeholder="First Name" />
-                <span asp-validation-for="FirstName" class="text-danger"></span>
-            </div>
-
-            <div class="col-md-6 mb-3">
-                <label class="form-label">Last Name</label>
-                <input type="text" class="form-control" asp-for="LastName" required placeholder="Last Name" />
-                <span asp-validation-for="LastName" class="text-danger"></span>
-            </div>
-         </div>
-
-            <div class="mb-3">
-                <label class="form-label">Delivery Address</label>
-                <input type="text" class="form-control" asp-for="DeliveryAddress" required placeholder="Enter your address" />
-                <span asp-validation-for="DeliveryAddress" class="text-danger"></span>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">Phone Number</label>
-                <input type="text" class="form-control" asp-for="PhoneNumber" required placeholder="Enter your phone number" />
-                <span asp-validation-for="PhoneNumber" class="text-danger"></span>
-            </div>
-
-            <div class="mb-3">
-                <label class="form-label">User Email</label>
-                <input type="text" class="form-control bg-light" value="@Model.UserEmail" readonly />
-            </div>
-
-                <div class="mb-3">
-                    <label class="form-label">Country</label>
-                    <input type="text" class="form-control" asp-for="Country" required placeholder="Enter your country" />
-                    <span asp-validation-for="Country" class="text-danger"></span>
-                </div>
-
-            <div class="row">
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">City</label>
-                    <input type="text" class="form-control" asp-for="City" required placeholder="Enter your city" />
-                    <span asp-validation-for="City" class="text-danger"></span>
-                </div>
-
-                <div class="col-md-6 mb-3">
-                    <label class="form-label">Zip Code</label>
-                    <input type="text" class="form-control" asp-for="ZipCode" required placeholder="ZIP Code" />
-                    <span asp-validation-for="ZipCode" class="text-danger"></span>
+            <div class="checkout-form">
+                <h3 class="section-title mb-4">Shipping Information</h3>
+                <div class="row g-4">
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="text" class="form-control modern-input" asp-for="FirstName" required>
+                            <label><i class="fas fa-user me-2"></i>First Name</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="text" class="form-control modern-input" asp-for="LastName" required>
+                            <label><i class="fas fa-user me-2"></i>Last Name</label>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="form-floating">
+                            <input type="text" class="form-control modern-input" asp-for="DeliveryAddress" required>
+                            <label><i class="fas fa-map-marker-alt me-2"></i>Delivery Address</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="tel" class="form-control modern-input" asp-for="PhoneNumber" required>
+                            <label><i class="fas fa-mobile-alt me-2"></i>Phone Number</label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-floating">
+                            <input type="text" class="form-control modern-input" asp-for="Country" required>
+                            <label><i class="fas fa-globe me-2"></i>Country</label>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-floating">
+                            <input type="text" class="form-control modern-input" asp-for="City" required>
+                            <label><i class="fas fa-city me-2"></i>City</label>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-floating">
+                            <input type="text" class="form-control modern-input" asp-for="ZipCode" required>
+                            <label><i class="fas fa-mail-bulk me-2"></i>ZIP Code</label>
+                        </div>
+                    </div>
                 </div>
             </div>
 
-            <button type="submit" class="btn btn-primary w-100 py-2">Confirm & Pay</button>
+            <div class="form-actions mt-5 d-flex justify-content-between">
+                <a href="@Url.Action("Index", "Cart")" class="btn btn-back">
+                    <i class="fas fa-arrow-left me-2"></i>Back to Cart
+                </a>
+                <button type="submit" class="btn btn-confirm">
+                    Confirm Order<i class="fas fa-check-circle ms-2"></i>
+                </button>
+            </div>
         </form>
     </div>
 </div>
 
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}
-
 <style>
+
+    .item-image {
+        width: 100px;
+        height: 100px;
+        object-fit: cover;
+        border-radius: 8px;
+        border: 2px solid #e2e8f0;
+        transition: transform 0.3s ease;
+    }
+
+    .dark-mode .item-image {
+        border-color: rgba(255, 255, 255, 0.1);
+    }
+
+    .cart-item:hover .item-image {
+        transform: scale(1.05);
+    }
+
+    :root {
+        --background: #f8fafc;
+        --text-primary: #1e293b;
+        --text-secondary: #64748b;
+        --glass-bg: rgba(255, 255, 255, 0.9);
+        --price-bg: linear-gradient(135deg, #34d399, #10b981); /* Light green */
+    }
+
+    .dark-mode {
+        --background: #0f172a;
+        --text-primary: #f8fafc;
+        --text-secondary: #94a3b8;
+        --glass-bg: rgba(25, 32, 54, 0.9);
+        --price-bg: linear-gradient(135deg, #6366f1, #4f46e5); /* Indigo */
+    }
+
     body {
-        font-family: 'Poppins', sans-serif;
+        background: var(--background);
+        color: var(--text-primary);
     }
 
-    .card {
-        border-radius: 15px;
-        border: none;
-        animation: fadeIn 0.5s ease-in-out;
-        background: white;
+    .glass-card {
+        background: var(--glass-bg);
+        border-radius: 20px;
     }
 
-    h2 {
-        color: #4c4b54;
-        font-weight: 600;
-        transition: color 0.3s ease-in-out;
-    }
-
- 
-    media (prefers-color-scheme: dark) {
-        h2
-
-    {
-        color: #f8f9fa; 
-    }
-
-    .form-control {
-        border-radius: 8px;
-        padding: 10px;
-        transition: 0.3s;
-    }
-
-        .form-control:focus {
-            border-color: #667eea;
-            box-shadow: 0 0 8px rgba(102, 126, 234, 0.5);
-        }
-
-    .btn-primary {
-        background: #667eea;
-        border: none;
-        border-radius: 8px;
-        font-weight: 600;
-        transition: 0.3s;
-    }
-
-        .btn-primary:hover {
-            background: #5648a5;
-            transform: scale(1.02);
-        }
-
-    keyframes fadeIn {
-        from
-
-    {
+    .price-badge {
+        display: inline-block;
+        background: var(--price-bg);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 30px;
+        font-weight: 700;
+        font-size: 18px;
+        text-align: center;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+        transition: transform 0.3s ease, box-shadow 0.3s ease, opacity 1s ease;
         opacity: 0;
-        transform: translateY(-10px);
     }
 
-    to {
-        opacity: 1;
-        transform: translateY(0);
+        .price-badge:hover {
+            box-shadow: 0px 0px 15px rgba(255, 255, 255, 0.5);
+            transform: scale(1.1);
+        }
+
+    keyframes pulse {
+        0%
+
+    {
+        transform: scale(1);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
     }
 
+    50% {
+        transform: scale(1.05);
+        box-shadow: 0 0 15px rgba(255, 255, 255, 0.5);
+    }
+
+    100% {
+        transform: scale(1);
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    }
+
+    }
+
+    .modern-input {
+        background: rgba(255, 255, 255, 0.2);
+        border: 2px solid #e2e8f0;
+        color: var(--text-primary);
+    }
+
+    .dark-mode .modern-input {
+        background: rgba(255, 255, 255, 0.1);
+        border-color: rgba(255, 255, 255, 0.3);
+        color: #f8fafc;
+    }
+
+    .btn-confirm {
+        background: linear-gradient(135deg, #6366f1, #4f46e5);
+        color: white;
+    }
+
+    .dark-mode .btn-confirm {
+        background: linear-gradient(135deg, #6366f1, #4f46e5);
+    }
+
+    .btn-back {
+        background: rgba(255, 255, 255, 0.1);
+    }
+
+    .dark-mode .btn-back {
+        background: rgba(255, 255, 255, 0.2);
+        color: #f8fafc;
+    }
+
+    keyframes gradient-pulse {
+        0%
+
+    {
+        background-position: 0% 50%;
+    }
+
+    50% {
+        background-position: 100% 50%;
+    }
+
+    100% {
+        background-position: 0% 50%;
+    }
+
+    }
+
+    .input-focused .form-control {
+        transform: scale(1.02);
+        box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    }
+
+    .form-floating label {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .cart-item {
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+        .cart-item::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(circle at var(--x, 50%) var(--y, 50%), rgba(255,255,255,0.1) 0%, rgba(255,255,255,0) 70%);
+            pointer-events: none;
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .cart-item:hover::before {
+            opacity: 1;
+        }
+
+    .valid .form-control {
+        border-color: #34d399 !important;
+    }
+
+    .invalid .form-control {
+        border-color: #ef4444 !important;
+    }
+
+    .btn-confirm {
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+        .btn-confirm::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: linear-gradient(45deg, transparent 25%, rgba(255,255,255,0.1) 50%, transparent 75%);
+            animation: shine 3s infinite;
+        }
+
+    keyframes shine {
+        100%
+
+    {
+        transform: translateX(100%);
+    }
+
+    }
+
+    media (prefers-reduced-motion: reduce) {
+        * {
+            transition: none !important;
+            animation: none !important;
+        }
     }
 </style>
 
 <script>
-    document.addEventListener("DOMContentLoaded", function () {
-    const inputs = document.querySelectorAll(".form-control");
 
-    inputs.forEach(input => {
-        input.addEventListener("focus", () => {
-            input.style.background = "#f8f9fa";
+        document.addEventListener("DOMContentLoaded", function () {
+        // Total Price Animation
+        const totalPrice = document.getElementById("total-price");
+        const animateTotalPrice = () => {
+            totalPrice.style.opacity = "1";
+            setInterval(() => {
+                totalPrice.style.animation = "pulse 1.5s ease";
+                setTimeout(() => totalPrice.style.animation = "", 1500);
+            }, 3000);
+        };
+
+        // Smooth Form Interactions
+        const inputs = document.querySelectorAll('.modern-input');
+        inputs.forEach(input => {
+            input.addEventListener('focus', () => {
+                input.parentElement.classList.add('input-focused');
+                input.previousElementSibling.style.transform = 'translateY(-120%) scale(0.9)';
+            });
+
+            input.addEventListener('blur', () => {
+                input.parentElement.classList.remove('input-focused');
+                if (!input.value) {
+                    input.previousElementSibling.style.transform = '';
+                }
+            });
         });
 
-        input.addEventListener("blur", () => {
-            input.style.background = "";
+        // Cart Item Hover Effects
+        document.querySelectorAll('.cart-item').forEach(item => {
+            item.addEventListener('mousemove', (e) => {
+                const rect = item.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                item.style.setProperty('--x', `${x}px`);
+                item.style.setProperty('--y', `${y}px`);
+            });
+        });
+
+        // Form Submission Handler
+        document.querySelector('form').addEventListener('submit', (e) => {
+            const btn = document.querySelector('.btn-confirm');
+            btn.innerHTML = `<div class="spinner-border spinner-border-sm" role="status">
+                               <span class="visually-hidden">Loading...</span>
+                             </div> Processing...`;
+            btn.disabled = true;
+        });
+
+        // Intersection Observer for Items
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = 1;
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.cart-item').forEach(item => {
+            item.style.opacity = 0;
+            item.style.transform = 'translateY(20px)';
+            item.style.transition = 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)';
+            observer.observe(item);
+        });
+
+        // Initialize animations
+        animateTotalPrice();
+    });
+
+    // Gradient Animation
+    const updateGradient = (element) => {
+        const gradient = `
+            radial-gradient(
+                circle at var(--x, 50%) var(--y, 50%),
+                rgba(255,255,255,0.15) 0%,
+                rgba(255,255,255,0) 60%
+            )`;
+        element.style.backgroundImage = gradient;
+    };
+
+    // Real-time Validation
+    document.querySelectorAll('.modern-input').forEach(input => {
+        input.addEventListener('input', () => {
+            if (input.checkValidity()) {
+                input.parentElement.classList.add('valid');
+                input.parentElement.classList.remove('invalid');
+            } else {
+                input.parentElement.classList.add('invalid');
+                input.parentElement.classList.remove('valid');
+            }
         });
     });
-});
-
-    </script>
+</script>
