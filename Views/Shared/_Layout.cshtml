@@ -72,7 +72,49 @@
                         <button id="darkModeToggle" class="btn btn-outline-light me-2 rounded-pill px-3">
                             🌙 Dark Mode
                         </button>
-                        <partial name="_LoginPartial" />
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                            <div class="dropdown">
+                                <button class="btn btn-link dropdown-toggle user-menu" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-user-circle me-2"></i>
+                                    @User.Identity.Name
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end user-dropdown" aria-labelledby="userDropdown">
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="Order" asp-action="PurchaseHistory">
+                                            <i class="fas fa-shopping-bag me-2"></i>
+                                            <span>My Orders</span>
+                                            <div class="hover-line"></div>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a class="dropdown-item" asp-controller="Favorites" asp-action="Index">
+                                            <i class="fas fa-heart me-2"></i>
+                                            <span>Favorites</span>
+                                            <div class="hover-line"></div>
+                                        </a>
+                                    </li>
+                                    <li class="dropdown-divider"></li>
+                                    <li>
+                                        <form asp-controller="Account" asp-action="Logout" method="post" id="logoutForm" class="d-inline">
+                                            <button type="submit" class="dropdown-item btn btn-link">
+                                                <i class="fas fa-sign-out-alt me-2"></i>
+                                                <span>Logout</span>
+                                                <div class="hover-line"></div>
+                                            </button>
+                                        </form>
+                                    </li>
+                                </ul>
+                            </div>
+
+                        }
+                        else
+                        {
+                            <a class="btn btn-outline-light me-2" asp-controller="Account" asp-action="Login">Login</a>
+                            <a class="btn btn-light" asp-controller="Account" asp-action="Register">Register</a>
+                        }
+                    </div>
+                </div>
                     </div>
                 </div>
             </div>
@@ -150,4 +192,105 @@
     }
 
     }
+
+    .user-menu {
+        color: #2c3e50 !important;
+        text-decoration: none !important;
+        transition: all 0.3s ease;
+        position: relative;
+        padding: 8px 15px !important;
+        border-radius: 8px !important;
+    }
+
+        .user-menu:hover {
+            background: rgba(46, 134, 222, 0.1) !important;
+        }
+
+        .user-menu::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 50%;
+            width: 0;
+            height: 2px;
+            background: #2e86de;
+            transition: all 0.3s ease;
+        }
+
+        .user-menu:hover::after {
+            width: calc(100% - 30px);
+            left: 15px;
+        }
+
+    .user-dropdown {
+        border: none !important;
+        box-shadow: 0 5px 25px rgba(0,0,0,0.1);
+        border-radius: 12px !important;
+        padding: 10px 0 !important;
+        margin-top: 10px !important;
+        min-width: 220px;
+        transform: translateY(10px);
+        transition: all 0.3s ease;
+        background: #ffffff;
+    }
+
+        .user-dropdown .dropdown-item {
+            position: relative;
+            padding: 12px 20px !important;
+            color: #2c3e50;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+        }
+
+            .user-dropdown .dropdown-item:hover {
+                background: transparent !important;
+                color: #2e86de !important;
+                padding-left: 25px !important;
+            }
+
+            .user-dropdown .dropdown-item .hover-line {
+                position: absolute;
+                left: 0;
+                bottom: 0;
+                width: 3px;
+                height: 0;
+                background: #2e86de;
+                transition: all 0.3s ease;
+            }
+
+            .user-dropdown .dropdown-item:hover .hover-line {
+                height: 100%;
+            }
+
+        .user-dropdown .dropdown-divider {
+            margin: 10px 0;
+            border-color: #eee;
+        }
+
+    /* Dark mode styles */
+    body.dark-mode .user-menu {
+        color: #ecf0f1 !important;
+    }
+
+        body.dark-mode .user-menu:hover {
+            background: rgba(255,255,255,0.1) !important;
+        }
+
+    body.dark-mode .user-dropdown {
+        background: #2c3e50;
+        box-shadow: 0 5px 25px rgba(0,0,0,0.3);
+    }
+
+        body.dark-mode .user-dropdown .dropdown-item {
+            color: #ecf0f1;
+        }
+
+            body.dark-mode .user-dropdown .dropdown-item:hover {
+                color: #2e86de !important;
+            }
+
+        body.dark-mode .user-dropdown .dropdown-divider {
+            border-color: #34495e;
+        }
 </style>
