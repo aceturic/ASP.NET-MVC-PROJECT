@@ -19,6 +19,7 @@ options.UseSqlServer(builder.Configuration.GetConnectionString("Default")));
 builder.Services.AddScoped<FavoriteProductService>();
 builder.Services.AddScoped<TicketService>();
 builder.Services.AddScoped<ChatService>();
+builder.Services.AddScoped<CouponService>();
 
 builder.Services.AddIdentity<Users, IdentityRole>(options =>
 {

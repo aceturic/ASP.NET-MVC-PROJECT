@@ -3,91 +3,242 @@
 @{
     ViewData["Title"] = "Purchase History";
 }
+
 <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
-<div class="container mt-4">
-    <h2 class="text-center">🛍️ My Purchase History</h2>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        --primary-color: #4361ee;
+        --secondary-color: #3f37c9;
+        --success-color: #4cc9f0;
+        --danger-color: #ff4d4f;
+        --warning-color: #faad14;
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        background-color: #f8f9fa;
+        color: #212529;
+        transition: background-color 0.3s, color 0.3s;
+    }
+
+    .dark-mode {
+        background-color: #111 !important;
+        color: #f8f9fa !important;
+    }
+
+        .dark-mode .text-muted,
+        .dark-mode .text-sm {
+            color: #ccc !important;
+        }
+
+    .order-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        transition: all 0.3s ease;
+        background: #fff;
+        color: #333;
+        overflow: hidden;
+        position: relative;
+    }
+
+    .dark-mode .order-card {
+        background: #1e1e1e;
+        color: #f1f1f1;
+    }
+
+    .order-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(67, 97, 238, 0.1);
+    }
+
+    .order-card::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 4px;
+        background: linear-gradient(90deg, var(--primary-color) 50%, rgba(255,255,255,0) 50%);
+        background-size: 200% 100%;
+        transition: background-position 0.5s ease;
+    }
+
+    .order-card:hover::before {
+        background-position: -100% 0;
+    }
+
+    .status-badge {
+        font-size: 0.85rem;
+        padding: 6px 12px;
+        border-radius: 20px;
+        transition: all 0.3s ease;
+    }
+
+    .product-list {
+        list-style: none;
+        padding-left: 0;
+    }
+
+    .product-item {
+        display: flex;
+        align-items: center;
+        padding: 8px 0;
+        border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .dark-mode .product-item {
+        border-color: rgba(255,255,255,0.1);
+    }
+
+    .product-image {
+        width: 40px;
+        height: 40px;
+        border-radius: 8px;
+        margin-right: 12px;
+        object-fit: cover;
+    }
+
+    .animate-card {
+        opacity: 0;
+        transform: translateY(20px);
+        animation: cardEnter 0.6s ease forwards;
+    }
+
+    @@keyframes cardEnter {
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .ripple-btn {
+        position: relative;
+        overflow: hidden;
+        transition: all 0.3s ease;
+    }
+
+        .ripple-btn span {
+            position: relative;
+            z-index: 1;
+        }
+
+    .ripple-effect {
+        position: absolute;
+        width: 100px;
+        height: 100px;
+        background: rgba(255,255,255,0.3);
+        border-radius: 50%;
+        transform: translate(-50%, -50%) scale(0);
+        animation: rippleAnimation 0.6s linear;
+        pointer-events: none;
+    }
+
+    @@keyframes rippleAnimation {
+        to {
+            transform: translate(-50%, -50%) scale(4);
+            opacity: 0;
+        }
+    }
+
+    .empty-state {
+        text-align: center;
+        padding: 40px;
+        background: #fff;
+        border-radius: 15px;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        color: #333;
+        transition: background 0.3s, color 0.3s;
+    }
+
+    .dark-mode .empty-state {
+        background: #1e1e1e;
+        color: #f1f1f1;
+    }
+
+    .empty-state img {
+        width: 200px;
+        margin-bottom: 20px;
+    }
+
+    .dark-mode .modal-content {
+        background-color: #1e1e1e;
+        color: #f8f9fa;
+    }
+
+    .dark-mode .btn-close {
+        filter: invert(1);
+    }
+</style>
+
+<div class="container py-5">
+    <h1 class="text-center mb-5 fw-600">🛍️ Purchase History</h1>
 
     @if (!Model.Any())
     {
-        <div class="alert alert-info text-center">
-            <p>You have no past orders.</p>
+        <div class="empty-state animate-card">
+            <img src="https://cdn-icons-png.flaticon.com/512/7486/7486747.png" alt="Empty cart">
+            <h4 class="mb-3">No Orders Found</h4>
+            <p class="text-muted">Your order history will appear here once you make purchases.</p>
         </div>
     }
     else
     {
-        <div class="row">
+        <div class="row g-4">
             @foreach (var order in Model)
             {
-                <div class="col-md-6 col-lg-4 mb-4">
-                    <div class="card shadow-sm border-0">
-                        <div class="card-body">
+                <div class="col-md-6 col-lg-4 animate-card" style="animation-delay: 0.@(Model.ToList().IndexOf(order) * 2)s">
+                    <div class="order-card h-100 p-3">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <h6 class="mb-1 text-muted">Order #@order.Id</h6>
+                                <div class="d-flex align-items-center gap-2">
+                                    <span class="status-badge" data-status="@order.Status.ToString().ToLower()"></span>
+                                    <span class="text-muted text-sm">@order.OrderDate.ToString("dd MMM yyyy")</span>
+                                </div>
+                            </div>
+                            <span class="text-primary fw-500">@order.Items.Sum(i => i.Price * i.Quantity).ToString("C")</span>
+                        </div>
 
-                            <h5 class="card-title text-primary">Поръчани продукти:</h5>
-                            <ul class="mb-2">
-                                @foreach (var item in order.Items)
+                        <div class="mb-3">
+                            <div class="product-list">
+                                @foreach (var item in order.Items.Take(2))
                                 {
-                                    <li>@item.Product.Name x @item.Quantity (@item.Price.ToString("C"))</li>
+                                    <div class="product-item">
+                                         <img src="~/products/@item.Product.ImageFileName" class="product-image" alt="@item.Product.Name" />
+                                        <div>
+                                            <div class="fw-500">@item.Product.Name</div>
+                                            <small class="text-muted">x @item.Quantity • @item.Price.ToString("C")</small>
+                                        </div>
+                                    </div>
                                 }
-                            </ul>
+                            </div>
+                            @if (order.Items.Count > 2)
+                            {
+                                <div class="text-center mt-2">
+                                    <small class="text-muted">+ @(order.Items.Count - 2) more items</small>
+                                </div>
+                            }
+                        </div>
 
-                            <p>
-                                <strong>Общо:</strong> <span class="badge bg-success">
-                                    @order.Items.Sum(i => i.Price * i.Quantity).ToString("C")
-                                </span>
-                            </p>
-
-                            <p><strong>Адрес:</strong> @order.DeliveryAddress, @order.City, @order.Country (@order.ZipCode)</p>
-                            <p><strong>Телефон:</strong> @order.PhoneNumber</p>
-                            <p class="text-muted">
-                                <strong>Дата:</strong> <span class="badge bg-secondary">@order.OrderDate.ToString("yyyy-MM-dd HH:mm")</span>
-                            </p>
-
-                            <!-- Статус -->
-                            <p>
-                                <strong>Статус:</strong>
-                                @if (order.Status == OrderStatus.PendingCancellation)
-                                {
-                                    <span class="badge bg-warning">Чака одобрение</span>
-                                }
-                                else if (order.Status == OrderStatus.Cancelled)
-                                {
-                                    <span class="badge bg-danger">Отменена</span>
-                                }
-                                else if (order.Status == OrderStatus.Rejected)
-                                {
-                                    <span class="badge bg-info">Отказано</span>
-                                }
-                                else
-                                {
-                                    <span class="badge bg-success">Обработва се</span>
-                                }
-                            </p>
-
-                            <!-- Buttons for Actions -->
-                            <div class="d-flex gap-2 mt-3">
-                                <!-- Product Details -->
-                                <h6 class="text-muted">Продукти:</h6>
-                                <ul>
-                                    @foreach (var item in order.Items)
-                                    {
-                                        <li>
-                                            @item.Product.Name
-                                            <a asp-controller="ProductDetails" asp-action="Index" asp-route-id="@item.ProductId"
-                                               class="btn btn-sm btn-outline-secondary ms-2">
-                                                <i class="fas fa-info-circle"></i> Детайли
-                                            </a>
-                                        </li>
-                                    }
-                                </ul>
-
-
-                                <!-- Request Cancellation -->
+                        <div class="border-top pt-3">
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <a asp-controller="Order" asp-action="Details" asp-route-id="@order.Id"
+                                       class="btn btn-outline-primary w-100 ripple-btn">
+                                        <i class="fas fa-eye"></i> Details
+                                    </a>
+                                </div>
                                 @if (order.Status == OrderStatus.Processing)
                                 {
-                                    <a asp-action="CancelRequest" asp-route-id="@order.Id"
-                                       class="btn btn-danger flex-grow-1 text-center">
-                                        <i class="bi bi-x-circle"></i> Request Cancellation
-                                    </a>
+                                    <div class="col-6">
+                                        <button class="btn btn-danger w-100 ripple-btn"
+                                                onclick="confirmCancellation('@order.Id')">
+                                            <i class="fas fa-times-circle"></i> Cancel
+                                        </button>
+                                    </div>
                                 }
                             </div>
                         </div>
@@ -98,39 +249,71 @@
     }
 </div>
 
-<!-- Updated Styling -->
-<style>
-    .card {
-        transition: transform 0.2s ease-in-out;
+<!-- Cancellation Modal -->
+<div class="modal fade" id="cancelModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Confirm Cancellation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to cancel this order?
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <a id="cancelLink" href="#" class="btn btn-danger">Confirm</a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // Status badge styling
+        document.querySelectorAll('.status-badge').forEach(badge => {
+            const status = badge.dataset.status;
+            const statusText = {
+                'pendingcancellation': { text: 'Pending Approval', class: 'bg-warning text-dark' },
+                'cancelled': { text: 'Cancelled', class: 'bg-danger text-white' },
+                'rejected': { text: 'Rejected', class: 'bg-info text-white' },
+                'processing': { text: 'Processing', class: 'bg-success text-white' }
+            }[status];
+
+            badge.textContent = statusText.text;
+            badge.classList.add(...statusText.class.split(" "));
+        });
+
+        // Ripple effect
+        document.querySelectorAll('.ripple-btn').forEach(btn => {
+            btn.addEventListener('click', function (e) {
+                const ripple = document.createElement('div');
+                ripple.className = 'ripple-effect';
+                ripple.style.left = `${e.offsetX}px`;
+                ripple.style.top = `${e.offsetY}px`;
+                this.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 600);
+            });
+        });
+
+        // Scroll animation
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = 1;
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.animate-card').forEach(card => {
+            observer.observe(card);
+        });
+    });
+
+    function confirmCancellation(orderId) {
+        const modal = new bootstrap.Modal(document.getElementById('cancelModal'));
+        document.getElementById('cancelLink').href = `/Order/CancelRequest/${orderId}`;
+        modal.show();
     }
-
-        .card:hover {
-            transform: scale(1.03);
-        }
-
-    .badge {
-        font-size: 14px;
-        padding: 8px;
-    }
-
-    .card .btn {
-        text-align: center;
-        font-size: 14px;
-        padding: 8px 12px;
-        min-width: 30%;
-    }
-
-        .card .btn i {
-            margin-right: 5px;
-        }
-
-    /* Fix Media Query */
-    media (max-width: 768px) {
-        .card .btn
-
-    {
-        width: 100%; /* Full-width buttons on smaller screens */
-    }
-
-    }
-</style>
+</script>

@@ -8,7 +8,6 @@
     <h2 class="mb-4 fw-light display-5">🛒 Твоята количка</h2>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 
-
     @if (!Model.Items.Any())
     {
         <div class="alert alert-info rounded-4 shadow-sm d-flex align-items-center" role="alert">
@@ -18,7 +17,7 @@
     }
     else
     {
-        <form asp-action="UpdateCart" method="post">
+        <form asp-action="UpdateCart" method="post" id="cartForm">
             <div class="cart-items mb-5">
                 @foreach (var item in Model.Items)
                 {
@@ -37,13 +36,13 @@
                                     <h3 class="h5 mb-2">@item.ProductName</h3>
                                     <div class="text-muted">Единична цена: @item.Price лв.</div>
                                 </div>
-                                
+
                                 <div class="col-md-3">
                                     <div class="d-flex align-items-center gap-2">
-                                        <input type="number" 
-                                               name="Quantities[@item.ProductId]" 
-                                               value="@item.Quantity" 
-                                               class="form-control form-control-lg w-25" 
+                                        <input type="number"
+                                               name="Quantities[@item.ProductId]"
+                                               value="@item.Quantity"
+                                               class="form-control form-control-lg w-25"
                                                min="1">
                                         <div class="text-nowrap">
                                             x @item.Price лв.
@@ -53,15 +52,14 @@
                                        class="btn btn-link text-danger p-2">
                                         <i class="fas fa-minus-circle"></i>
                                     </a>
-
                                 </div>
-                                
+
                                 <div class="col-md-3 text-end">
                                     <div class="d-flex justify-content-end align-items-center gap-3">
                                         <div class="h5 mb-0 text-success">
                                             @item.TotalPrice лв.
                                         </div>
-                                        <a href="@Url.Action("RemoveFromCart", "Cart", new { id = item.ProductId })" 
+                                        <a href="@Url.Action("RemoveFromCart", "Cart", new { id = item.ProductId })"
                                            class="btn btn-link text-danger p-2">
                                             <i class="fas fa-trash-alt"></i>
                                         </a>
@@ -73,24 +71,45 @@
                 }
             </div>
 
+            <!-- Coupon Code Field -->
+            <div class="card p-4 mb-4 shadow-sm rounded-4">
+                <h5 class="mb-3">Имаш код за отстъпка?</h5>
+                <div class="d-flex gap-2">
+                    <input type="text" name="couponCode" value="@Model.CouponCode" class="form-control" placeholder="Въведи код">
+                    <button type="submit" class="btn btn-outline-primary">Приложи</button>
+                </div>
+                @if (Model.DiscountAmount > 0)
+                {
+                    <div class="text-success mt-2">Отстъпка: -@Model.DiscountAmount лв.</div>
+                }
+            </div>
+
             <div class="cart-summary rounded-4 p-4 shadow-sm bg-body-tertiary">
                 <div class="row align-items-center">
                     <div class="col-md-6 mb-3 mb-md-0">
                         <h4 class="mb-0 fw-light">
-                            Обща сума: 
-                            <span class="fw-bold text-body-emphasis">@Model.GrandTotal лв.</span>
+                            Обща сума:
+                            @if (Model.DiscountAmount > 0)
+                            {
+                                <span class="fw-bold text-decoration-line-through me-2 text-muted">@Model.GrandTotal лв.</span>
+                                <span class="fw-bold text-success">@Model.GrandTotalAfterDiscount лв.</span>
+                            }
+                            else
+                            {
+                                <span class="fw-bold text-body-emphasis">@Model.GrandTotal лв.</span>
+                            }
                         </h4>
                     </div>
-                    
+
                     <div class="col-md-6 d-flex gap-3 justify-content-end">
                         <button type="submit" class="btn btn-primary px-4 py-3 rounded-pill">
                             <i class="fas fa-sync me-2"></i>Обнови количка
                         </button>
-                        <a href="@Url.Action("ClearCart", "Cart")" 
+                        <a href="@Url.Action("ClearCart", "Cart")"
                            class="btn btn-outline-danger px-4 py-3 rounded-pill">
                             <i class="fas fa-eraser me-2"></i>Изчисти
                         </a>
-                        <a href="@Url.Action("Checkout", "Order")" 
+                        <a href="@Url.Action("Checkout", "Order")"
                            class="btn btn-success px-4 py-3 rounded-pill">
                             <i class="fas fa-credit-card me-2"></i>Поръчай
                         </a>

@@ -29,30 +29,47 @@
                                 <i class="fas fa-home"></i> Home
                             </a>
                         </li>
-                        @if (User.Identity.IsAuthenticated)
-                        {
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Order" asp-action="PurchaseHistory">
-                                    <i class="fas fa-shopping-bag"></i> My Orders
-                                </a>
-                            </li>
-                        }
+                      
 
                         @if (User .Identity.IsAuthenticated && User.IsInRole("Admin"))
                         {
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Admin" asp-action="AdminDashboard">
-                                    <i class="fas fa-tachometer-alt"></i> Admin Dashboard
-                                </a>
-                            </li>
+                            <div class="dropdown">
+                                <button class="btn btn-link dropdown-toggle user-menu" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="fas fa-user-circle me-2"></i>
+                                    Admin
+                                </button>
+                                <ul class="dropdown-menu dropdown-menu-end user-dropdown" aria-labelledby="userDropdown">
+                                    <li>
+                                        <a asp-controller="Products" asp-action="Index" class="dropdown-item">
+                                            <i class="fas fa-box"></i> Manage Products
+                                            <div class="hover-line"></div>
+                                        </a>
+                                    </li>
+                                    <li>
+                                        <a asp-controller="Admin" asp-action="RegisteredUsers" class="dropdown-item">
+                                            <i class="fas fa-user-friends"></i> View Users
+                                            <div class="hover-line"></div>
+                                        </a>
+                                    </li>
+                                    <li class="dropdown-divider"></li>
+                                    <li>
+                                        <a asp-controller="PurchaseHistoryAdmin" asp-action="Index" class="dropdown-item">
+											<i class="fas fa-history"></i> Purchase Control 
+                                            <div class="hover-line"></div>
+                                        </a>    
+                                    </li>
+                                    <li>
+                                        <a asp-controller="Admin" asp-action="CancelRequests" class="dropdown-item">
+                                            <i class="fas fa-ban"></i> Manage Requests
+                                            <div class="hover-line"></div>
+                                        </a>
+                                    </li>
+                                </ul>
+                            </div>
                         }
 
    
-                            <li class="nav-item">
-                                <a class="nav-link" asp-controller="Favorites" asp-action="Index">
-                                    <i class="fas fa-heart"></i> Favorites
-                                </a>
-                            </li>
+                            
 
                         <li class="nav-item">
                             <a class="nav-link" asp-controller="Cart" asp-action="Index">

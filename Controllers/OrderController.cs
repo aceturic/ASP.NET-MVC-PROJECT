@@ -168,6 +168,24 @@ namespace UsersApp.Controllers
             return RedirectToAction("PurchaseHistory");
         }
 
+        public async Task<IActionResult> Details(int id)
+        {
+            var order = await _context.Orders
+                .Include(o => o.Items)
+                    .ThenInclude(i => i.Product)
+                .FirstOrDefaultAsync(o => o.Id == id && o.UserEmail == User.FindFirstValue(ClaimTypes.Email));
+
+            if (order == null)
+            {
+                return NotFound();
+            }
+
+            return View(order);
+        }
+
+
+
+
         public IActionResult OrderSuccess()
         {
             return View();

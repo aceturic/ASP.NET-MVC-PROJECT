@@ -19,6 +19,7 @@ namespace UsersApp.Data
         public DbSet<FavoriteProduct> FavoriteProducts { get; set; }
         public DbSet<Ticket> Tickets { get; set; }
         public DbSet<Message> Messages { get; set; }
+        public DbSet<Coupon> Coupons { get; set; }
 
 
         protected override void OnModelCreating(ModelBuilder builder)

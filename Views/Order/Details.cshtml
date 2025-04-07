@@ -1,0 +1,321 @@
+﻿@model UsersApp.Models.Order
+
+@{
+    ViewData["Title"] = "Order Details";
+}
+
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+
+<style>
+    :root {
+        --primary-color: #4361ee;
+        --secondary-color: #3f37c9;
+        --accent-color: #4895ef;
+        --success-color: #4cc9f0;
+    }
+
+    body {
+        font-family: 'Poppins', sans-serif;
+        background: #f8f9fa;
+    }
+
+    .order-card {
+        border: none;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+        transition: transform 0.3s ease;
+        background: linear-gradient(145deg, #ffffff, #f8f9fa);
+        overflow: hidden;
+    }
+
+        .order-card:hover {
+            transform: translateY(-5px);
+        }
+
+    .order-header {
+        background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+        color: white;
+        padding: 2rem;
+        border-radius: 15px 15px 0 0;
+    }
+
+    .product-item {
+        transition: all 0.3s ease;
+        border-radius: 10px;
+        border: 1px solid rgba(0,0,0,0.05);
+    }
+
+        .product-item:hover {
+            transform: translateX(10px);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.1);
+        }
+
+    .status-badge {
+        font-size: 0.9rem;
+        padding: 0.5rem 1rem;
+        border-radius: 25px;
+        transition: all 0.3s ease;
+    }
+
+    .total-price {
+        font-size: 1.5rem;
+        font-weight: 600;
+        color: var(--primary-color);
+        text-shadow: 0 2px 4px rgba(67, 97, 238, 0.1);
+    }
+
+    .detail-icon {
+        width: 40px;
+        height: 40px;
+        background: rgba(67, 97, 238, 0.1);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        margin-right: 1rem;
+    }
+
+    .animate-in {
+        animation: slideUp 0.5s ease forwards;
+    }
+
+    @@keyframes slideUp {
+        from {
+            opacity: 0;
+            transform: translateY(20px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    .ripple-effect {
+        position: relative;
+        overflow: hidden;
+    }
+
+        .ripple-effect:after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            animation: ripple 1s ease-out;
+        }
+
+    @@keyframes ripple {
+        0% {
+            transform: scale(1);
+            opacity: 1;
+        }
+
+        100% {
+            transform: scale(50);
+            opacity: 0;
+        }
+    }
+
+    body.dark-mode {
+        background-color: #121212;
+        color: #e0e0e0;
+    }
+
+        body.dark-mode .order-card {
+            background: linear-gradient(145deg, #1e1e1e, #2a2a2a);
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        body.dark-mode .order-header {
+            background: linear-gradient(135deg, #3f37c9, #4361ee);
+            color: #ffffff;
+        }
+
+        body.dark-mode .product-item {
+            background-color: #1e1e1e;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        body.dark-mode .delivery-info-card {
+            background: rgba(255, 255, 255, 0.05);
+            color: #e0e0e0;
+        }
+
+        body.dark-mode .total-price {
+            color: #4cc9f0;
+            text-shadow: none;
+        }
+
+        body.dark-mode .btn-outline-primary {
+            border-color: #4cc9f0;
+            color: #4cc9f0;
+        }
+
+            body.dark-mode .btn-outline-primary:hover {
+                background-color: #4cc9f0;
+                color: #121212;
+            }
+
+        body.dark-mode .btn-primary {
+            background-color: #4cc9f0;
+            border-color: #4cc9f0;
+            color: #121212;
+        }
+
+        body.dark-mode .status-badge.bg-white {
+            background-color: #333;
+            color: #4cc9f0 !important;
+        }
+
+</style>
+
+<div class="container py-5">
+    <div class="order-card animate-in" style="animation-delay: 0.1s">
+        <div class="order-header">
+            <div class="d-flex justify-content-between align-items-center">
+                <h2 class="mb-0"><i class="fas fa-receipt me-2"></i>Order #@Model.Id</h2>
+                <div class="d-flex align-items-center">
+                    <span class="status-badge bg-white text-primary">@Model.Status</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="card-body p-4">
+            <div class="row g-4">
+                <!-- Order Details Column -->
+                <div class="col-lg-6">
+                    <div class="animate-in" style="animation-delay: 0.2s">
+                        <h4 class="mb-3"><i class="fas fa-clock me-2"></i>Order Timeline</h4>
+                        <div class="d-flex align-items-center mb-4">
+                            <div class="detail-icon">
+                                <i class="fas fa-calendar-day text-primary"></i>
+                            </div>
+                            <div>
+                                <p class="mb-0 fw-500">Order Date</p>
+                                <small class="text-muted">@Model.OrderDate.ToString("dd MMM yyyy, HH:mm")</small>
+                            </div>
+                        </div>
+
+                        <h4 class="mt-4 mb-3"><i class="fas fa-box-open me-2"></i>Products</h4>
+                        <div class="product-list">
+                            @foreach (var item in Model.Items)
+                            {
+                                <div class="product-item p-3 mb-3 animate-in" style="animation-delay: 0.3s">
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <div class="d-flex align-items-center">
+                                            <img src="~/products/@item.Product.ImageFileName" class="product-image" alt="@item.Product.Name" class="rounded me-3" style="width: 50px; height: 50px; object-fit: cover;">
+                                            <div>
+                                                <h6 class="mb-0">@item.Product.Name</h6>
+                                                <small class="text-muted">x @item.Quantity</small>
+                                            </div>
+                                        </div>
+                                        <div class="text-end">
+                                            <span class="d-block text-primary fw-500">@item.Price.ToString("C")</span>
+                                            <a asp-controller="ProductDetails" asp-action="Index" asp-route-id="@item.Product.Id"
+                                               class="btn btn-link btn-sm text-decoration-none ripple-effect">
+                                                View Product <i class="fas fa-arrow-right ms-1"></i>
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Delivery Info Column -->
+                <div class="col-lg-6">
+                    <div class="animate-in" style="animation-delay: 0.4s">
+                        <h4 class="mb-4"><i class="fas fa-truck me-2"></i>Delivery Information</h4>
+                        <div class="delivery-info-card p-4 mb-4" style="background: rgba(67, 97, 238, 0.05); border-radius: 10px;">
+                            <div class="mb-3">
+                                <div class="detail-icon">
+                                    <i class="fas fa-map-marker-alt text-primary"></i>
+                                </div>
+                                <div class="mt-2">
+                                    <p class="mb-1 fw-500">Shipping Address</p>
+                                    <p class="text-muted mb-0">
+                                        @Model.DeliveryAddress<br>
+                                        @Model.City, @Model.Country<br>
+                                        @Model.ZipCode
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="mt-4">
+                                <div class="detail-icon">
+                                    <i class="fas fa-phone text-primary"></i>
+                                </div>
+                                <div class="mt-2">
+                                    <p class="mb-1 fw-500">Contact Number</p>
+                                    <p class="text-muted mb-0">@Model.PhoneNumber</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="total-section p-4 text-center animate-in" style="animation-delay: 0.5s">
+                            <h5 class="text-uppercase text-muted mb-3">Total Amount</h5>
+                            <div class="total-price">@Model.Items.Sum(i => i.Price * i.Quantity).ToString("C")</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mt-4 text-center animate-in" style="animation-delay: 0.6s">
+                <a asp-action="PurchaseHistory" class="btn btn-primary btn-lg px-5 ripple-effect">
+                    <i class="fas fa-arrow-left me-2"></i>Back to History
+                </a>
+                <button class="btn btn-outline-primary btn-lg px-5 ms-2" onclick="window.print()">
+                    <i class="fas fa-print me-2"></i>Print
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Add ripple effect to buttons
+        document.querySelectorAll('.ripple-effect').forEach(button => {
+            button.addEventListener('click', function(e) {
+                let ripple = document.createElement('div');
+                ripple.className = 'ripple';
+                this.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 1000);
+            });
+        });
+
+        // Add scroll animations
+        const animateElements = document.querySelectorAll('.animate-in');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = 1;
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, { threshold: 0.1 });
+
+        animateElements.forEach(element => {
+            observer.observe(element);
+        });
+
+        // Dynamic status colors
+        const statusBadge = document.querySelector('.status-badge');
+        const status = '@Model.Status'.toLowerCase();
+        const statusColors = {
+            completed: 'bg-success text-white',
+            pending: 'bg-warning text-dark',
+            processing: 'bg-info text-white',
+            cancelled: 'bg-danger text-white'
+        };
+        statusBadge.className += ` ${statusColors[status] || 'bg-secondary text-white'}`;
+    });
+</script>

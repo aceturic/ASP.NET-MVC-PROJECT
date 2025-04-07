@@ -13,6 +13,12 @@
         public string PhoneNumber { get; set; }
         public string? UserEmail { get; set; }
 
+        public string? CouponCode { get; set; }
+
+        public decimal DiscountAmount { get; set; }
+
+        public decimal GrandTotalAfterDiscount => GrandTotal - DiscountAmount;
+
         public decimal GrandTotal => Items.Sum(i => i.TotalPrice);
     }
 }
