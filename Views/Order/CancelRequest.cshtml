@@ -4,48 +4,367 @@
     ViewData["Title"] = "Confirm Cancellation";
 }
 
-<div class="container mt-4">
-    <h2 class="text-center text-danger">🚨 Confirm Cancellation Request</h2>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
 
-    <div class="card shadow-sm border-0 mt-4">
-        <div class="card-body">
-
-            <h5 class="text-primary">Продукти в поръчката:</h5>
-            <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Продукт</th>
-                        <th>Количество</th>
-                        <th>Ед. Цена</th>
-                        <th>Общо</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach (var item in Model.Items)
-                    {
-                        <tr>
-                            <td>@item.Product.Name</td>
-                            <td>@item.Quantity</td>
-                            <td>@item.Price.ToString("C")</td>
-                            <td>@(item.Price * item.Quantity).ToString("C")</td>
-                        </tr>
-                    }
-                </tbody>
-            </table>
-
-            <p><strong>Доставка до:</strong> @Model.DeliveryAddress, @Model.City, @Model.Country (@Model.ZipCode)</p>
-            <p><strong>Телефон:</strong> @Model.PhoneNumber</p>
-            <p class="text-muted"><strong>Дата на поръчка:</strong> @Model.OrderDate.ToString("yyyy-MM-dd HH:mm")</p>
-
-            <div class="alert alert-warning">
-                <strong>Внимание:</strong> Заявката за анулиране ще бъде изпратена за одобрение от администратор.
-            </div>
-
-            <form asp-action="SubmitCancelRequest" method="post">
-                <input type="hidden" name="id" value="@Model.Id" />
-                <button type="submit" class="btn btn-danger">Потвърди анулиране</button>
-                <a asp-action="PurchaseHistory" class="btn btn-secondary">Обратно към поръчките</a>
-            </form>
+<div class="cancel-container">
+    <div class="cancel-header">
+        <div class="warning-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10" />
+                <path d="M12 8v4M12 16h.01" />
+            </svg>
         </div>
+        <h1 class="cancel-title">Cancel Order #@Model.Id</h1>
+        <p class="cancel-subtitle">Please review your order details before proceeding</p>
+    </div>
+
+    <div class="order-details-card">
+        <div class="order-summary">
+            <h3 class="section-title">Order Summary</h3>
+
+            <div class="product-list">
+                @foreach (var item in Model.Items)
+                {
+                    <div class="product-item">
+                        <div class="product-info">
+                            <h4 class="product-name">@item.Product.Name</h4>
+                            <div class="product-meta">
+                                <span class="quantity">@item.Quantity x</span>
+                                <span class="price">@item.Price.ToString("C")</span>
+                            </div>
+                        </div>
+                        <div class="product-total">
+                            @((item.Price * item.Quantity).ToString("C"))
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <div class="delivery-details">
+            <h3 class="section-title">Delivery Information</h3>
+            <div class="detail-grid">
+                <div class="detail-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <div>
+                        <div class="detail-label">Address</div>
+                        <div class="detail-value">@Model.DeliveryAddress, @Model.City</div>
+                        <div class="detail-value">@Model.Country (@Model.ZipCode)</div>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <i class="fas fa-phone"></i>
+                    <div>
+                        <div class="detail-label">Phone Number</div>
+                        <div class="detail-value">@Model.PhoneNumber</div>
+                    </div>
+                </div>
+                <div class="detail-item">
+                    <i class="fas fa-calendar-day"></i>
+                    <div>
+                        <div class="detail-label">Order Date</div>
+                        <div class="detail-value">@Model.OrderDate.ToString("dd MMM yyyy HH:mm")</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="warning-notice">
+            <div class="warning-icon">
+                <i class="fas fa-exclamation-triangle"></i>
+            </div>
+            <div class="warning-content">
+                <h4>Important Notice</h4>
+                <p>Your cancellation request will be reviewed by our team. Approval may take up to 24 hours.</p>
+            </div>
+        </div>
+
+        <form asp-action="SubmitCancelRequest" method="post" class="action-buttons">
+            <input type="hidden" name="id" value="@Model.Id" />
+            <button type="submit" class="confirm-btn">
+                <i class="fas fa-ban"></i>
+                Confirm Cancellation
+            </button>
+            <a asp-action="PurchaseHistory" class="cancel-btn">
+                <i class="fas fa-arrow-left"></i>
+                Back to Orders
+            </a>
+        </form>
     </div>
 </div>
+
+<style>
+    :root {
+        --primary: #ef4444;
+        --secondary: #dc2626;
+        --text: #1f2937;
+        --border: #e5e7eb;
+        --radius: 12px;
+        --shadow: 0 4px 24px rgba(0,0,0,0.05);
+    }
+
+    body {
+        font-family: 'Inter', sans-serif;
+        background: #f8fafc;
+        transition: background 0.3s ease, color 0.3s ease;
+    }
+
+    .cancel-container {
+        max-width: 800px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+    }
+
+    .cancel-header {
+        text-align: center;
+        margin-bottom: 2rem;
+    }
+
+    .warning-icon {
+        color: var(--primary);
+        margin-bottom: 1rem;
+    }
+
+    .cancel-title {
+        font-size: 2rem;
+        font-weight: 700;
+        color: var(--text);
+        margin-bottom: 0.5rem;
+    }
+
+    .cancel-subtitle {
+        color: #6b7280;
+        font-size: 1.1rem;
+    }
+
+    .order-details-card {
+        background: white;
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        padding: 2rem;
+        transition: background 0.3s ease, border-color 0.3s ease;
+    }
+
+    .section-title {
+        font-size: 1.25rem;
+        font-weight: 600;
+        color: var(--text);
+        margin-bottom: 1.5rem;
+        padding-bottom: 0.5rem;
+        border-bottom: 2px solid var(--border);
+        transition: color 0.3s ease;
+    }
+
+    .product-list {
+        display: grid;
+        gap: 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .product-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 1rem;
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        transition: border-color 0.3s ease;
+    }
+
+    .product-name {
+        font-weight: 500;
+        margin-bottom: 0.25rem;
+    }
+
+    .product-meta {
+        display: flex;
+        gap: 0.5rem;
+        color: #6b7280;
+        font-size: 0.9rem;
+    }
+
+    .product-total {
+        font-weight: 600;
+        color: var(--text);
+    }
+
+    .detail-grid {
+        display: grid;
+        gap: 1.5rem;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        margin-bottom: 2rem;
+    }
+
+    .detail-item {
+        display: flex;
+        gap: 1rem;
+        align-items: center;
+        padding: 1rem;
+        background: #f8fafc;
+        border-radius: var(--radius);
+        transition: background 0.3s ease;
+    }
+
+        .detail-item i {
+            font-size: 1.25rem;
+            color: var(--primary);
+        }
+
+    .detail-label {
+        font-size: 0.9rem;
+        color: #6b7280;
+        margin-bottom: 0.25rem;
+    }
+
+    .detail-value {
+        font-weight: 500;
+        color: var(--text);
+    }
+
+    .warning-notice {
+        display: flex;
+        gap: 1rem;
+        padding: 1.5rem;
+        background: #fff3cd;
+        border-left: 4px solid #ffc107;
+        border-radius: var(--radius);
+        margin: 2rem 0;
+    }
+
+        .warning-notice .warning-icon {
+            font-size: 1.5rem;
+            color: #ffc107;
+        }
+
+    .warning-content h4 {
+        font-weight: 600;
+        margin-bottom: 0.5rem;
+    }
+
+    .action-buttons {
+        display: flex;
+        gap: 1rem;
+        flex-wrap: wrap;
+    }
+
+    .confirm-btn {
+        background: var(--primary);
+        color: white;
+        padding: 1rem 2rem;
+        border: none;
+        border-radius: var(--radius);
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+        .confirm-btn:hover {
+            background: var(--secondary);
+            transform: translateY(-1px);
+        }
+
+    .cancel-btn {
+        background: none;
+        color: var(--text);
+        padding: 1rem 2rem;
+        border: 2px solid var(--border);
+        border-radius: var(--radius);
+        font-weight: 500;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+    }
+
+        .cancel-btn:hover {
+            border-color: var(--primary);
+            color: var(--primary);
+        }
+
+    /* Responsive adjustments */
+    @@media (max-width: 768px) {
+        .cancel-title
+
+    {
+        font-size: 1.5rem;
+    }
+
+    .product-item {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+
+    .action-buttons {
+        flex-direction: column;
+    }
+
+    .confirm-btn,
+    .cancel-btn {
+        width: 100%;
+        justify-content: center;
+    }
+
+    }
+
+    /* Dark Mode Overrides */
+    body.dark-mode {
+        background: #121212;
+        color: #e0e0e0;
+    }
+
+        body.dark-mode .cancel-title,
+        body.dark-mode .cancel-subtitle,
+        body.dark-mode .section-title,
+        body.dark-mode .detail-value,
+        body.dark-mode .product-total {
+            color: #e0e0e0;
+        }
+
+        body.dark-mode .order-details-card {
+            background: #1e1e1e;
+            border: 1px solid #333;
+            box-shadow: 0 4px 24px rgba(0,0,0,0.8);
+        }
+
+        body.dark-mode .product-item {
+            border-color: #333;
+        }
+
+        body.dark-mode .detail-item {
+            background: #1e1e1e;
+        }
+
+        body.dark-mode .cancel-btn {
+            border-color: #444;
+            color: #e0e0e0;
+        }
+
+        body.dark-mode .warning-notice {
+            background: #2a2a2a;
+        }
+</style>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        // Add subtle animations
+        document.querySelectorAll('.product-item, .detail-item').forEach((el, index) => {
+            setTimeout(() => {
+                el.style.opacity = '1';
+                el.style.transform = 'translateY(0)';
+            }, index * 50);
+        });
+
+        // Confirm button interaction
+        document.querySelector('.confirm-btn').addEventListener('click', (e) => {
+            if(!confirm('Are you sure you want to cancel this order?')) {
+                e.preventDefault();
+            }
+        });
+    });
+</script>

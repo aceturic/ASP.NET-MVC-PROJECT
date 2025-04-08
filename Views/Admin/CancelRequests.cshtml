@@ -3,59 +3,199 @@
 @{
     ViewData["Title"] = "Cancel Requests";
 }
-<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cancel Requests | MyStore</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        /* Base Styles */
+        .card {
+            border: none;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+            border-radius: 12px;
+            overflow: hidden;
+            background: #ffffff;
+        }
 
-<div class="container mt-4">
-    <h2 class="text-center">🛑 Order Cancellation Requests</h2>
+        .card-header {
+            padding: 1.5rem 1rem;
+        }
 
-    @if (!Model.Any())
-    {
-        <div class="alert alert-info text-center">
-            <p>No pending cancellation requests.</p>
-        </div>
-    }
-    else
-    {
-        <table class="table table-striped mt-3">
-            <thead>
-                <tr>
-                    <th>Products</th>
-                    <th>User</th>
-                    <th>Total</th>
-                    <th>Request Date</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @foreach (var order in Model)
+        .table thead {
+            background: linear-gradient(120deg, #f8f9fa 0%, #f1f3f5 100%);
+        }
+
+        .table th {
+            border-bottom: 2px solid #e9ecef;
+            font-weight: 600;
+            text-transform: uppercase;
+            font-size: 0.85rem;
+            letter-spacing: 0.5px;
+        }
+
+        .table td {
+            vertical-align: middle;
+        }
+
+        .product-list {
+            list-style: none;
+            padding-left: 0;
+            margin-bottom: 0;
+        }
+
+            .product-list li {
+                display: flex;
+                justify-content: space-between;
+                padding: 4px 0;
+                font-size: 0.9rem;
+            }
+
+        .amount {
+            font-family: 'Courier New', Courier, monospace;
+            font-weight: 600;
+            color: #2d3436;
+        }
+
+        .action-btn {
+            transition: transform 0.2s ease;
+        }
+
+            .action-btn:hover {
+                transform: translateY(-1px);
+            }
+
+        /* -- Global Dark Mode Overrides for this page (the dark-mode class is added globally) -- */
+
+        body.dark-mode .card {
+            background: #1e1e1e;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Override the white header background even if the class 'bg-white' is applied */
+        body.dark-mode .card-header.bg-white,
+        body.dark-mode .card-header {
+            background-color: #1e1e1e !important;
+            border-bottom: 1px solid #444;
+            color: #e0e0e0;
+        }
+
+        body.dark-mode .table thead {
+            background: linear-gradient(120deg, #2a2a2a 0%, #1a1a1a 100%);
+        }
+
+        body.dark-mode .table th {
+            border-bottom-color: #444;
+            color: #ddd;
+        }
+
+        body.dark-mode .table td {
+            color: #ccc;
+        }
+
+        body.dark-mode .alert {
+            background-color: #1e1e1e;
+            color: #ccc;
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-4">
+        <div class="card">
+            <!-- The header uses the bootstrap 'bg-white' class. The dark-mode rule below will override it -->
+            <div class="card-header bg-white border-bottom-0 py-4">
+                <h3 class="h4 mb-0 text-center">
+                    <i class="fas fa-ban text-danger me-2"></i>
+                    Order Cancellation Requests
+                </h3>
+            </div>
+
+            <div class="card-body pt-0">
+                @if (!Model.Any())
                 {
-                    <tr>
-                        <td>
-                            <ul class="mb-0">
-                                @foreach (var item in order.Items)
-                                {
-                                    <li>@item.Product.Name x @item.Quantity</li>
-                                }
-                            </ul>
-                        </td>
-                        <td>@order.UserEmail</td>
-                        <td>
-                            @order.Items.Sum(i => i.Price * i.Quantity).ToString("C")
-                        </td>
-                        <td>@order.OrderDate.ToString("yyyy-MM-dd HH:mm")</td>
-                        <td>
-                            <form method="post" asp-action="ApproveCancellation" class="d-inline">
-                                <input type="hidden" name="id" value="@order.Id" />
-                                <button type="submit" class="btn btn-success btn-sm">✅ Approve</button>
-                            </form>
-                            <form method="post" asp-action="RejectCancellation" class="d-inline">
-                                <input type="hidden" name="id" value="@order.Id" />
-                                <button type="submit" class="btn btn-danger btn-sm">❌ Reject</button>
-                            </form>
-                        </td>
-                    </tr>
+                    <div class="alert alert-light text-center py-5">
+                        <i class="fas fa-check-circle fa-2x text-success mb-3"></i>
+                        <p class="h5 mb-0">No pending cancellation requests</p>
+                        <p class="text-muted mt-2">All clear! No cancellation requests to process.</p>
+                    </div>
                 }
-            </tbody>
-        </table>
-    }
-</div>
+                else
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover mb-0">
+                            <thead class="text-secondary">
+                                <tr>
+                                    <th>Products</th>
+                                    <th>Customer</th>
+                                    <th class="text-end">Total</th>
+                                    <th class="text-end">Order Date</th>
+                                    <th class="text-center">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var order in Model)
+                                {
+                                    <tr>
+                                        <td>
+                                            <ul class="product-list">
+                                                @foreach (var item in order.Items)
+                                                {
+                                                    <li>
+                                                        <span>@item.Product.Name</span>
+                                                        <span class="text-muted">x @item.Quantity</span>
+                                                    </li>
+                                                }
+                                            </ul>
+                                        </td>
+                                        <td>
+                                            <div class="d-flex flex-column">
+                                                <span class="fw-500">@order.UserEmail</span>
+                                            </div>
+                                        </td>
+                                        <td class="text-end amount">
+                                            @order.Items.Sum(i => i.Price * i.Quantity).ToString("C")
+                                        </td>
+                                        <td class="text-end">
+                                            <div class="text-nowrap">@order.OrderDate.ToString("MMM dd, yyyy")</div>
+                                            <small class="text-muted">@order.OrderDate.ToString("HH:mm")</small>
+                                        </td>
+                                        <td class="text-center">
+                                            <div class="d-flex gap-2 justify-content-center">
+                                                <form method="post" asp-action="ApproveCancellation">
+                                                    <input type="hidden" name="id" value="@order.Id" />
+                                                    <button type="submit" class="btn btn-sm btn-success action-btn"
+                                                            data-bs-toggle="tooltip" title="Approve cancellation">
+                                                        <i class="fas fa-check-circle"></i>
+                                                    </button>
+                                                </form>
+                                                <form method="post" asp-action="RejectCancellation">
+                                                    <input type="hidden" name="id" value="@order.Id" />
+                                                    <button type="submit" class="btn btn-sm btn-danger action-btn"
+                                                            data-bs-toggle="tooltip" title="Reject cancellation">
+                                                        <i class="fas fa-times-circle"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</body>
+</html>
+
+
+<script>
+    // Initialize Bootstrap tooltips
+    var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'))
+    var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+        return new bootstrap.Tooltip(tooltipTriggerEl)
+    })
+</script>
+

@@ -71,12 +71,6 @@
    
                             
 
-                        <li class="nav-item">
-                            <a class="nav-link" asp-controller="Cart" asp-action="Index">
-                                <i class="fa-solid fa-cart-shopping"></i> Cart
-                            </a>
-                        </li>
-
 
                         <li class="nav-item">
                             <a class="nav-link" asp-area="" asp-controller="Store" asp-action="Index">
@@ -88,7 +82,12 @@
                     <div class="d-flex align-items-center">
                         <button id="darkModeToggle" class="btn btn-outline-light me-2 rounded-pill px-3">
                             🌙 Dark Mode
-                        </button>
+                        </button
+                        <li class="nav-item cart-item">
+    <a class="nav-link cart-button position-relative" asp-controller="Cart" asp-action="Index">
+        <i class="fa-solid fa-cart-shopping cart-icon"></i>
+    </a>
+</li>
                         @if (User.Identity.IsAuthenticated)
                         {
                             <div class="dropdown">
@@ -310,4 +309,141 @@
         body.dark-mode .user-dropdown .dropdown-divider {
             border-color: #34495e;
         }
+
+        .cart-item {
+    margin-left: 1rem;
+    transition: transform 0.3s ease;
+}
+
+.cart-button {
+    display: flex;
+    align-items: center;
+    padding: 0.5rem 1rem;
+    border-radius: 30px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    position: relative;
+    background: rgba(var(--bs-primary-rgb), 0.1);
+    border: 2px solid transparent;
+}
+
+.cart-icon {
+    font-size: 1.25rem;
+    transition: all 0.3s ease;
+    color: var(--bs-primary);
+}
+
+.cart-badge {
+    position: absolute;
+    top: -8px;
+    right: -8px;
+    font-size: 0.75rem;
+    padding: 0.35em 0.65em;
+    transition: all 0.3s ease;
+    transform: scale(1);
+}
+
+/* Hover Effects */
+.cart-button:hover {
+    background: rgba(var(--bs-primary-rgb), 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.cart-button:hover .cart-icon {
+    transform: scale(1.1) rotate(-10deg);
+}
+
+/* Pulse Animation */
+@@keyframes pulse {
+    0% { transform: scale(1); }
+    50% { transform: scale(1.15); }
+    100% { transform: scale(1); }
+}
+
+.cart-button:active .cart-icon {
+    animation: pulse 0.3s ease;
+}
+
+/* Dark Mode Adjustments */
+body.dark-mode .cart-button {
+    background: rgba(255, 255, 255, 0.1);
+    border-color: rgba(255, 255, 255, 0.15);
+}
+
+body.dark-mode .cart-icon {
+    color: #fff;
+}
+
+/* Mobile Responsiveness */
+@@media (max-width: 768px) {
+    .cart-button {
+        margin-right: 0.5rem;
+        padding: 0.4rem 0.8rem;
+    }
+    
+    .cart-badge {
+        top: -5px;
+        right: -5px;
+    }
+}
+
+    /* Mobile-specific styles */
+    @@media (max-width: 991.98px) {
+        .user-menu {
+            width: 100%;
+            text-align: left;
+            padding: 0.75rem 1rem;
+        }
+
+        .user-dropdown {
+            position: fixed !important;
+            bottom: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            top: auto !important;
+            width: 100vw !important;
+            transform: none !important;
+            margin: 0;
+            border-radius: 12px 12px 0 0;
+            box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .user-dropdown .dropdown-item {
+            padding: 1rem 1.5rem;
+        }
+    }
+
+    /* Desktop styles remain unchanged */
+    @@media (min-width: 992px) {
+        .user-menu {
+            padding: 0.25rem 0.5rem;
+        }
+        
+        .user-dropdown {
+            min-width: 200px;
+        }
+    }
 </style>
+
+<script>
+    document.querySelectorAll('.cart-button').forEach(button => {
+    // Hover effect
+    button.addEventListener('mouseenter', () => {
+        button.querySelector('.cart-badge').style.transform = 'scale(1.2)';
+    });
+    
+    button.addEventListener('mouseleave', () => {
+        button.querySelector('.cart-badge').style.transform = 'scale(1)';
+    });
+
+    // Click animation
+    button.addEventListener('click', (e) => {
+        if (!e.target.closest('a')) return;
+        
+        button.style.transform = 'scale(0.95)';
+        setTimeout(() => {
+            button.style.transform = '';
+        }, 200);
+    });
+});
+</script>
