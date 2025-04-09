@@ -1,99 +1,492 @@
 ﻿@model UsersApp.Models.Order
 
 @{
-    ViewData["Title"] = "Edit Order";
-    var itemList = Model.Items.ToList(); 
+    ViewData["Title"] = $"Order #{Model.Id}";
+    var itemList = Model.Items.ToList();
+    var totalAmount = itemList.Sum(item => item.Price * item.Quantity);
+    string orderStatus = "Processing";
+    string statusColor = "orange";  
+
 }
 
-<div class="container mt-5">
-    <h2>Edit Order</h2>
+<link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet" />
 
-    <form asp-action="Edit" method="post">
-        <input type="hidden" asp-for="Id" />
+<style>
+    body {
+        background-color: #111827; 
+        color: #E5E7EB;
+    }
 
-        <!-- Клиентски данни -->
-        <div class="row mb-3">
-            <div class="col">
-                <label asp-for="FirstName" class="form-label"></label>
-                <input asp-for="FirstName" class="form-control" />
+    .order-container {
+        background-color: #1F2937; 
+        border-radius: 0.5rem;
+        margin-top: 2rem;
+        margin-bottom: 2rem;
+        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+    }
+
+    .order-header {
+        background-color: #4F46E5;
+        color: white;
+        padding: 1.5rem;
+        border-top-left-radius: 0.5rem;
+        border-top-right-radius: 0.5rem;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+        .order-header h2 {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+
+            .order-header h2 .fa-receipt {
+                margin-right: 0.75rem;
+            }
+
+    .order-status {
+        background-color: white;
+        color: #374151;
+        padding: 0.25rem 0.75rem;
+        border-radius: 9999px;
+        font-size: 0.875rem;
+        font-weight: 500;
+    }
+    .status-cancelled {
+        background-color: #FEE2E2;
+        color: #DC2626;
+    }
+
+    .status-processing {
+        background-color: #FEF3C7;
+        color: #D97706;
+    }
+
+    .status-completed {
+        background-color: #D1FAE5;
+        color: #059669;
+    }
+
+
+    .order-body {
+        padding: 1.5rem;
+        display: grid;
+        grid-template-columns: repeat(1, minmax(0, 1fr));
+        gap: 2rem;
+    }
+
+
+    @@media (min-width: 768px) {
+        .order-body {
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+        }
+    }
+
+
+    .section-title {
+        font-size: 1.125rem;
+        font-weight: 600;
+        margin-bottom: 1rem;
+        color: #D1D5DB; 
+        display: flex;
+        align-items: center;
+    }
+
+        .section-title i {
+            margin-right: 0.5rem;
+            color: #9CA3AF;
+        }
+
+    .info-block {
+        margin-bottom: 1rem;
+    }
+
+        .info-block .info-label {
+            font-weight: 500;
+            color: #9CA3AF;
+            display: block;
+            margin-bottom: 0.25rem;
+        }
+
+        .info-block .info-value {
+            color: #E5E7EB;
+        }
+
+
+    .form-control-dark {
+        background-color: #374151;
+        color: #E5E7EB;
+        border: 1px solid #4B5563; 
+        border-radius: 0.375rem;
+    }
+
+        .form-control-dark:focus {
+            background-color: #4B5563;
+            color: #E5E7EB;
+            border-color: #6366F1; 
+            box-shadow: none;
+        }
+
+    .form-label-dark {
+        color: #D1D5DB;
+        margin-bottom: 0.5rem;
+        font-weight: 500;
+    }
+
+    label {
+        margin-bottom: 0.5rem;
+        display: block;
+    }
+
+
+    .product-list {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+    }
+
+    .product-item {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0.75rem 0;
+        border-bottom: 1px solid #374151; 
+    }
+
+        .product-item:last-child {
+            border-bottom: none;
+        }
+
+    .product-info {
+        flex-grow: 1;
+        margin-right: 1rem;
+    }
+
+    .product-name {
+        font-weight: 500;
+    }
+
+    .product-qty {
+        font-size: 0.875rem;
+        color: #9CA3AF;
+    }
+
+    .product-price {
+        font-weight: 600;
+        color: #67E8F9; 
+        min-width: 70px; 
+        text-align: right;
+        margin-left: 1rem;
+    }
+
+    .product-action {
+        margin-left: 1rem;
+    }
+
+        .product-action .btn-remove-item {
+            background-color: #DC2626;
+            color: white;
+            border: none;
+            padding: 0.25rem 0.5rem;
+            border-radius: 0.25rem;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+            .product-action .btn-remove-item:hover {
+                background-color: #B91C1C;
+            }
+
+
+    .total-amount-section {
+        margin-top: 1.5rem;
+        text-align: right;
+        padding-right: 1.5rem;
+        padding-bottom: 0.5rem;
+    }
+
+        .total-amount-section .total-label {
+            color: #9CA3AF;
+            font-size: 0.875rem;
+            text-transform: uppercase;
+            margin-bottom: 0.25rem;
+        }
+
+        .total-amount-section .total-value {
+            font-size: 1.875rem;
+            font-weight: 700;
+            color: #67E8F9;  
+        }
+
+    .action-buttons {
+        padding: 1rem 1.5rem;
+        border-top: 1px solid #374151;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        background-color: #1F2937;
+        border-bottom-left-radius: 0.5rem;
+        border-bottom-right-radius: 0.5rem;
+    }
+
+        .action-buttons .btn-custom-save {
+            background-color: #4F46E5;
+            color: white;
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+            .action-buttons .btn-custom-save:hover {
+                background-color: #4338CA;
+            }
+
+        .action-buttons .btn-custom-back {
+            background-color: #38BDF8; 
+            color: #075985; 
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            text-decoration: none; 
+            display: inline-flex;
+            align-items: center;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+        }
+
+            .action-buttons .btn-custom-back:hover {
+                background-color: #0EA5E9;
+            }
+
+            .action-buttons .btn-custom-back i {
+                margin-right: 0.5rem;
+            }
+
+        .action-buttons .btn-custom-print {
+            background-color: #374151;
+            color: #D1D5DB;
+            padding: 0.6rem 1.2rem;
+            border: 1px solid #4B5563;
+            border-radius: 0.375rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s ease;
+            display: inline-flex; 
+            align-items: center;
+        }
+
+            .action-buttons .btn-custom-print:hover {
+                background-color: #4B5563;
+            }
+
+            .action-buttons .btn-custom-print i {
+                margin-right: 0.5rem;
+            }
+
+    .alert-success {
+        background-color: #D1FAE5;
+        color: #065F46;
+        border-color: #A7F3D0;
+        margin: 1rem 1.5rem; 
+    }
+
+    .alert-danger {
+        background-color: #FEE2E2;
+        color: #991B1B;
+        border-color: #FECACA;
+        margin: 1rem 1.5rem; 
+    }
+
+    .add-product-form {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem;
+        align-items: flex-end;
+        padding: 1rem 0;
+        border-top: 1px solid #374151;
+        margin-top: 1rem;
+    }
+
+        .add-product-form > div {
+            flex-grow: 1; 
+        }
+
+        .add-product-form .btn-success {
+            background-color: #10B981;
+            border-color: #059669;
+            color: white;
+            height: calc(1.5em + 0.75rem + 2px); 
+            align-self: flex-end;
+        }
+
+            .add-product-form .btn-success:hover {
+                background-color: #059669;
+                border-color: #047857;
+            }
+
+</style>
+
+<div class="container" style="max-width: 1000px;">
+
+    <div class="order-container">
+        <div class="order-header">
+            <h2><i class="fas fa-receipt"></i>Order #@Model.Id</h2>
+
+        </div>
+
+        @if (TempData["SuccessMessage"] != null)
+        {
+            <div class="alert alert-success">@TempData["SuccessMessage"]</div>
+        }
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+        }
+
+        <form asp-action="Edit" method="post" id="editOrderForm">
+            @Html.AntiForgeryToken()
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="UserEmail" /> 
+            <input type="hidden" asp-for="OrderDate" />
+
+            <div class="order-body">
+
+
+                <div>
+                    <h3 class="section-title"><i class="fas fa-calendar-alt"></i>Order Information</h3>
+                    <div class="info-block">
+                        <span class="info-label">Order Date</span>
+                        <span class="info-value">@Model.OrderDate.ToString("dd MMM yyyy, HH:mm")</span>
+                    </div>
+                    <div class="info-block">
+                        <span class="info-label">User Email</span>
+                        <span class="info-value">@Model.UserEmail</span> 
+                    </div>
+
+                    <hr style="border-color: #374151; margin: 1.5rem 0;">
+
+                    <h3 class="section-title"><i class="fas fa-box"></i>Products</h3>
+                    <ul class="product-list">
+                        @for (int i = 0; i < itemList.Count; i++)
+                        {
+                            <li class="product-item">
+                                <div class="product-info">
+                                    <div class="product-name">@itemList[i].Product?.Name</div>
+                                    <div class="product-qty">Qty: @itemList[i].Quantity</div>
+                                </div>
+                                <div class="product-price">
+                                    @itemList[i].Price.ToString("C")
+                                </div>
+                                <div class="product-action">
+                                    <form asp-action="RemoveProductFromOrder" method="post" style="display: inline;" onsubmit="return confirm('Are you sure you want to remove this item?');">
+                                        @Html.AntiForgeryToken()
+                                        <input type="hidden" name="orderId" value="@Model.Id" />
+                                        <input type="hidden" name="productId" value="@itemList[i].ProductId" />
+                                        <button type="submit" class="btn-remove-item"><i class="fas fa-times"></i></button>
+                                    </form>
+                                </div>
+                            </li>
+                        }
+                        @if (!itemList.Any())
+                        {
+                            <li style="color: #9CA3AF; padding: 1rem 0;">No items in this order yet.</li>
+                        }
+                    </ul>
+
+                    <h4 class="section-title" style="margin-top: 2rem; font-size: 1rem;"><i class="fas fa-plus-circle"></i>Add Product</h4>
+                    <form asp-action="AddProductToOrder" method="post" class="add-product-form">
+                        @Html.AntiForgeryToken()
+                        <input type="hidden" name="orderId" value="@Model.Id" />
+                        <div>
+                            <label for="newProdId" class="form-label-dark" style="font-size: 0.875rem;">Product ID</label>
+                            <input type="number" id="newProdId" name="NewProductId" class="form-control form-control-dark" placeholder="Enter ID" required />
+                        </div>
+                        <div>
+                            <label for="newProdQty" class="form-label-dark" style="font-size: 0.875rem;">Quantity</label>
+                            <input type="number" id="newProdQty" name="Quantity" class="form-control form-control-dark" value="1" min="1" required />
+                        </div>
+                        <div>
+                            <button type="submit" class="btn btn-success"><i class="fas fa-plus"></i> Add</button>
+                        </div>
+                    </form>
+
+                </div> 
+
+
+                <div>
+                    <h3 class="section-title"><i class="fas fa-truck"></i>Delivery Information</h3>
+
+                    <div class="row mb-3">
+                        <div class="col">
+                            <label asp-for="FirstName" class="form-label-dark"></label>
+                            <input asp-for="FirstName" class="form-control form-control-dark" />
+                        </div>
+                        <div class="col">
+                            <label asp-for="LastName" class="form-label-dark"></label>
+                            <input asp-for="LastName" class="form-control form-control-dark" />
+                        </div>
+                    </div>
+                    <div class="mb-3 info-block">
+                        <h4 class="section-title" style="font-size: 1rem; margin-bottom: 0.5rem;"><i class="fas fa-map-marker-alt"></i>Shipping Address</h4>
+                        <label asp-for="DeliveryAddress" class="form-label-dark"></label>
+                        <input asp-for="DeliveryAddress" class="form-control form-control-dark" placeholder="Street Address" />
+
+                        <div class="row mt-2">
+                            <div class="col-md-7">
+                                <label asp-for="City" class="form-label-dark" style="font-size: 0.875rem;"></label>
+                                <input asp-for="City" class="form-control form-control-dark" />
+                            </div>
+                            <div class="col-md-5">
+                                <label asp-for="ZipCode" class="form-label-dark" style="font-size: 0.875rem;"></label>
+                                <input asp-for="ZipCode" class="form-control form-control-dark" />
+                            </div>
+                        </div>
+                        <div class="mt-2">
+                            <label asp-for="Country" class="form-label-dark" style="font-size: 0.875rem;"></label>
+                            <input asp-for="Country" class="form-control form-control-dark" />
+                        </div>
+                    </div>
+
+                    <hr style="border-color: #374151; margin: 1.5rem 0;">
+
+                    <div class="mb-3 info-block">
+                        <h4 class="section-title" style="font-size: 1rem; margin-bottom: 0.5rem;"><i class="fas fa-phone"></i>Contact Number</h4>
+                        <label asp-for="PhoneNumber" class="form-label-dark"></label>
+                        <input asp-for="PhoneNumber" class="form-control form-control-dark" />
+                    </div>
+
+                    <div class="total-amount-section">
+                        <div class="total-label">Total Amount</div>
+                        <div class="total-value">@totalAmount.ToString("C")</div>
+                    </div>
+
+                </div> 
+
+            </div> 
+
+        </form> 
+
+
+        <div class="action-buttons">
+            <div>
+                <a asp-action="Index" class="btn-custom-back"><i class="fas fa-arrow-left"></i> Back to List</a>
             </div>
-            <div class="col">
-                <label asp-for="LastName" class="form-label"></label>
-                <input asp-for="LastName" class="form-control" />
+            <div>
+          
+
+            
+                <button type="submit" form="editOrderForm" class="btn-custom-save ms-2">
+                    <i class="fas fa-save"></i> Save Changes
+                </button>
             </div>
         </div>
 
-        <div class="mb-3">
-            <label asp-for="DeliveryAddress" class="form-label"></label>
-            <input asp-for="DeliveryAddress" class="form-control" />
-        </div>
-
-        <div class="row mb-3">
-            <div class="col">
-                <label asp-for="City" class="form-label"></label>
-                <input asp-for="City" class="form-control" />
-            </div>
-            <div class="col">
-                <label asp-for="ZipCode" class="form-label"></label>
-                <input asp-for="ZipCode" class="form-control" />
-            </div>
-        </div>
-
-        <div class="mb-3">
-            <label asp-for="Country" class="form-label"></label>
-            <input asp-for="Country" class="form-control" />
-        </div>
-
-        <div class="mb-3">
-            <label asp-for="PhoneNumber" class="form-label"></label>
-            <input asp-for="PhoneNumber" class="form-control" />
-        </div>
-
-        <div class="mb-3">
-            <label asp-for="UserEmail" class="form-label"></label>
-            <input asp-for="UserEmail" class="form-control" readonly />
-        </div>
-
-        <!-- Продукти в поръчката -->
-        <h4>Products in Order</h4>
-
-        <table class="table">
-            <thead>
-                <tr>
-                    <th>Product</th>
-                    <th>Qty</th>
-                    <th>Price</th>
-                    <th></th>
-                </tr>
-            </thead>
-            <tbody>
-                @for (int i = 0; i < itemList.Count; i++)
-                {
-                    <tr>
-                        <td>@itemList[i].Product?.Name</td>
-                        <td>
-                            <input type="number" name="Items[@i].Quantity" class="form-control" value="@itemList[i].Quantity" min="1" />
-                            <input type="hidden" name="Items[@i].ProductId" value="@itemList[i].ProductId" />
-                        </td>
-                        <td>@itemList[i].Price.ToString("C")</td>
-                        <td>
-                            <a asp-action="RemoveProductFromOrder"
-                               asp-route-orderId="@Model.Id"
-                               asp-route-productId="@itemList[i].ProductId"
-                               class="btn btn-sm btn-danger">Remove</a>
-                        </td>
-                    </tr>
-                }
-
-            </tbody>
-        </table>
-
-        <div class="mb-3">
-            <label class="form-label">Add Product by ID</label>
-            <input type="number" name="NewProductId" class="form-control" placeholder="Enter Product ID to add" />
-        </div>
-
-        <button type="submit" class="btn btn-success">Save Changes</button>
-        <a asp-action="Index" class="btn btn-secondary ms-2">Cancel</a>
-    </form>
-</div>
+    </div> 
+</div> 
