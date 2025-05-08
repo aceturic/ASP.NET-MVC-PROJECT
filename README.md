@@ -1,7 +1,7 @@
 
 ## Description
 
-Briefly describe the purpose of your project, its main features, and the problem it solves.
+UsersApp is a web application built with ASP.NET Core MVC, allowing users to browse and purchase products, manage orders, write reviews, and interact with a customer support ticket system. The project follows the **Clean Architecture** approach, separating logic into different layers for better scalability and maintainability.
 
 ## Table of Contents
 
@@ -12,8 +12,12 @@ Briefly describe the purpose of your project, its main features, and the problem
 - [License](#license)
 
 ## Features
-Using my skid skills with burpsuite my tests indicates that there is no sql injection avaible(i am not too sure as i said my skid skills)
-## Installation
+- User authentication and role-based authorization
+- Product browsing, search, and detailed product pages
+- Order management and purchase history
+- Review system for products
+- Customer support ticket system
+- Admin panel for managing users, products, and orders## Installation
 Open the solution and navigate in the solution explorer to appsettings.json and connect your database example:
 "ConnectionStrings": {
     "Default": "Data Source=(LocalDb)\\MSSQLLocalDB;Initial Catalog=UserApp;Integrated Security=True;Encrypt=True"
