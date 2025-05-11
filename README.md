@@ -17,11 +17,7 @@ UsersApp is a web application built with ASP.NET Core MVC, allowing users to bro
 - Order management and purchase history
 - Review system for products
 - Customer support ticket system
-- Admin panel for managing users, products, and orders## Installation
-Open the solution and navigate in the solution explorer to appsettings.json and connect your database example:
-"ConnectionStrings": {
-    "Default": "Data Source=(LocalDb)\\MSSQLLocalDB;Initial Catalog=UserApp;Integrated Security=True;Encrypt=True"
-},
+- Admin panel for managing users, products, and order
 And run these commands
 ```sh
 Add-Migration UserApp
